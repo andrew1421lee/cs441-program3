@@ -5,17 +5,16 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
+import kotlin.random.Random
 
 class GameDemo : ApplicationAdapter() {
 
     private lateinit var stage: Stage
     private lateinit var camera: OrthographicCamera
     private lateinit var batch: SpriteBatch
-    //private lateinit var font: BitmapFont
     private lateinit var fpsCounter: FrameRate
 
     private lateinit var rockImg: Texture
@@ -42,6 +41,7 @@ class GameDemo : ApplicationAdapter() {
 
         // Start the game
         spawnRock()
+        spawnRock()
     }
 
     private fun spawnRock() {
@@ -49,8 +49,11 @@ class GameDemo : ApplicationAdapter() {
         val newPosX = (0..Gdx.graphics.width).random()
         val newPosY = (0..Gdx.graphics.height).random()
 
+        val newSpeedX = Random.nextInt(from = -20, until = 20).toFloat() / 10f
+        val newSpeedY = Random.nextInt(from = -20, until = 20).toFloat() / 10f
+
         // Create new rock
-        val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg)
+        val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg, speedX = newSpeedX, speedY = newSpeedY)
 
         // Add rock to stage
         stage.addActor(rock)
