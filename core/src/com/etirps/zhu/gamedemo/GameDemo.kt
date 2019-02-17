@@ -7,44 +7,53 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.FitViewport
 
 class GameDemo : ApplicationAdapter() {
 
+    private lateinit var stage: Stage
     private lateinit var camera: OrthographicCamera
     private lateinit var batch: SpriteBatch
-    private lateinit var font: BitmapFont
+    //private lateinit var font: BitmapFont
     private lateinit var fpsCounter: FrameRate
-    private lateinit var rockCollection: MutableList<Rock>
 
     private lateinit var rockImg: Texture
 
     override fun create() {
-        // Setup camera and size of view
+        // Get screen size for easier use
+        val screenWidth = Gdx.graphics.width.toFloat()
+        val screenHeight = Gdx.graphics.height.toFloat()
+
+        // Create camera and set to size of screen
         camera = OrthographicCamera()
-        camera.setToOrtho(false, 1920f, 1080f)
+        camera.setToOrtho(false, screenWidth, screenHeight)
 
+        // Create viewport and stage for correctly viewing the game
         batch = SpriteBatch()
-        font = BitmapFont()
+        stage = Stage(FitViewport(screenWidth, screenHeight, camera), batch)
 
+        // Setup fps counter
         fpsCounter = FrameRate()
-        fpsCounter.resize(camera.viewportWidth, camera.viewportHeight)
+        fpsCounter.resize(screenWidth, screenHeight)
 
-        rockCollection = mutableListOf()
+        // Initialize textures
+        rockImg = Texture("ref.png")
 
-        rockImg = Texture("rock1.png")
-
+        // Start the game
         spawnRock()
     }
 
-    fun spawnRock() {
-        val newPosX = (0..1920).random()
-        val newPosY = (0..1080).random()
+    private fun spawnRock() {
+        // Get x y positions for new rock
+        val newPosX = (0..Gdx.graphics.width).random()
+        val newPosY = (0..Gdx.graphics.height).random()
 
-        println("$newPosX x $newPosY")
+        // Create new rock
+        val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg)
 
-        val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), image = rockImg)
-
-        rockCollection.add(rock)
+        // Add rock to stage
+        stage.addActor(rock)
     }
 
     override fun render() {
@@ -58,24 +67,16 @@ class GameDemo : ApplicationAdapter() {
         // Tell batch to use coordinate system specified by camera
         batch.projectionMatrix = camera.combined
 
-        // Draw all the objects
-        batch.begin()
+        // Update all actors in stage
+        stage.act(Gdx.graphics.deltaTime)
 
-        for (rock in rockCollection) {
-            batch.draw(rock.image, rock.x, rock.y, rock.size, rock.size)
-            font.draw(batch, "${rock.x} x ${rock.y}", rock.x, rock.y)
-        }
+        // Draw stage actors
+        stage.draw()
 
-        batch.end()
-
+        // Update FPS
         fpsCounter.update()
         fpsCounter.render()
 
-        for(rock in rockCollection) {
-            rock.update()
-        }
-
-        //ship.x += 200 * Gdx.graphics.deltaTime
     }
 
     override fun dispose() {

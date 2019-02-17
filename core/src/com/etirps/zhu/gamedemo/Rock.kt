@@ -1,34 +1,38 @@
 package com.etirps.zhu.gamedemo
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.Actor
 
-class Rock (var x: Float,               var y: Float,
-            var speedX: Float = 1f,    var speedY: Float = 1f,
-            var angle: Float = 0f,      var rotation: Float = 0f,
-            var size: Float = 100f,     var image: Texture) {
+class Rock(posX: Float,             posY: Float,
+           var texture: Texture,    var size: Float = 200f,
+           var speedX: Float = 1f,  var speedY: Float = 1f,
+           var speedSpin: Float = 0.1f): Actor() {
 
-    var listener : Rock? = null
-
-    constructor(src: Rock): this(src.x, src.y, image = src.image) {
-        speedX = src.speedX
-        speedY = src.speedY
-        angle = src.angle
-        rotation = src.rotation
-        size = src.size
-        image = src.image
-        listener = src.listener
+    // Set actor x,y to given by constructor
+    init {
+        x = posX
+        y = posY
     }
 
-    fun update() {
+    // Draw rock on screen
+    override fun draw(batch: Batch, parentAlpha: Float) {
+        batch.draw(texture, x, y, size / 2, size / 2, size, size, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
+    }
+
+    // Update rock positions and rotation
+    override fun act(delta: Float) {
         x += speedX
         y += speedY
+        rotation += speedSpin
 
         when {
-            x + (size / 2) > 1920 -> x = 0f - (size / 2)
-            x + (size / 2) < 0 -> x = 1920f + (size / 2)
+            x + (size / 2) > Gdx.graphics.width.toFloat() -> x = 0f - (size / 2)
+            x + (size / 2) < 0 -> x = Gdx.graphics.width.toFloat() + (size / 2)
 
-            y + (size / 2) > 1080 -> y = 0f - (size / 2)
-            y + (size / 2) < 0 -> y = 1080f + (size / 2)
+            y + (size / 2) > Gdx.graphics.height.toFloat() -> y = 0f - (size / 2)
+            y + (size / 2) < 0 -> y = Gdx.graphics.height.toFloat() + (size / 2)
         }
     }
 }
