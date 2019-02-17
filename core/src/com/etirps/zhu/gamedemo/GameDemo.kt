@@ -49,11 +49,13 @@ class GameDemo : ApplicationAdapter() {
         val newPosX = (0..Gdx.graphics.width).random()
         val newPosY = (0..Gdx.graphics.height).random()
 
+        // Get random speeds for x, y, and spin
         val newSpeedX = Random.nextInt(from = -20, until = 20).toFloat() / 10f
         val newSpeedY = Random.nextInt(from = -20, until = 20).toFloat() / 10f
+        val newSpeedSpin = Random.nextInt(from = -20, until = 20).toFloat() / 100f
 
         // Create new rock
-        val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg, speedX = newSpeedX, speedY = newSpeedY)
+        val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg, speedX = newSpeedX, speedY = newSpeedY, speedSpin = newSpeedSpin)
 
         // Add rock to stage
         stage.addActor(rock)
