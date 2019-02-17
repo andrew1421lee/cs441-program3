@@ -27,12 +27,13 @@ class Rock(posX: Float,             posY: Float,
         y += speedY
         rotation += speedSpin
 
+        // teleport rock back on screen
         when {
-            x + (size / 2) > Gdx.graphics.width.toFloat() -> x = 0f - (size / 2)
-            x + (size / 2) < 0 -> x = Gdx.graphics.width.toFloat() + (size / 2)
+            x + (size / 2f) > Gdx.graphics.width.toFloat()    ->  x = 0f - (size / 2f)
+            x + (size / 2f) < 0                               ->  x = Gdx.graphics.width.toFloat() - (size / 2f)
 
-            y + (size / 2) > Gdx.graphics.height.toFloat() -> y = 0f - (size / 2)
-            y + (size / 2) < 0 -> y = Gdx.graphics.height.toFloat() + (size / 2)
+            y + (size / 2f) > Gdx.graphics.height.toFloat()   ->  y = 0f - (size / 2f)
+            y + (size / 2f) < 0                               ->  y = Gdx.graphics.height.toFloat() - (size / 2f)
         }
     }
 }
