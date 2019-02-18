@@ -109,8 +109,13 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         if(input.dragging) {
             // Draw a line to where finger is currently
             shapes.rectLine(Vector2(player.x + player.height / 2, player.y + player.height /2),
+                            Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
+                                    player.y + player.height /2 - (input.origY - input.powerLineY)), 20f)
+
+            shapes.rectLine(Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
+                                    player.y + player.height /2 - (input.origY - input.powerLineY)),
                             Vector2(player.x + player.height / 2 - (input.origX - input.destX),
-                                    player.y + player.height /2 - (input.origY - input.destY)), 20f)
+                                    player.y + player.height /2 - (input.origY - input.destY)), 3f)
 
             player.rotation = input.angle
         }
@@ -123,6 +128,18 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        if(!input.dragging) {
+            input.touchedDown = false
+            return true
+        }
+        // Discover what direction the bullet should be firing
+        val adjacent = cos(input.powerLineAngle) * input.powerLineDistance
+        val opposite = sin(input.powerLineAngle) * input.powerLineDistance
+
+        // Create new bullet
+        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 20f, adjacent / 20f), rockImg)
+        stage.addActor(bullet)
+
         // Should unflag everything
         input.touchedDown = false
         input.dragging = false
