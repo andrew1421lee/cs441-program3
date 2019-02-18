@@ -2,20 +2,26 @@ package com.etirps.zhu.gamedemo
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import kotlin.random.Random
 
-class GameDemo : ApplicationAdapter() {
+class GameDemo : ApplicationAdapter(), InputProcessor {
 
     private lateinit var stage: Stage
     private lateinit var camera: OrthographicCamera
     private lateinit var batch: SpriteBatch
+    private lateinit var shapes: ShapeRenderer
     private lateinit var fpsCounter: FrameRate
+    private lateinit var input: InputData
 
     private lateinit var rockImg: Texture
 
@@ -31,6 +37,11 @@ class GameDemo : ApplicationAdapter() {
         // Create viewport and stage for correctly viewing the game
         batch = SpriteBatch()
         stage = Stage(FitViewport(screenWidth, screenHeight, camera), batch)
+        shapes = ShapeRenderer()
+
+        // Setup input
+        Gdx.input.inputProcessor = this
+        input = InputData()
 
         // Setup fps counter
         fpsCounter = FrameRate()
@@ -71,6 +82,7 @@ class GameDemo : ApplicationAdapter() {
 
         // Tell batch to use coordinate system specified by camera
         batch.projectionMatrix = camera.combined
+        shapes.projectionMatrix = camera.combined
 
         // Update all actors in stage
         stage.act(Gdx.graphics.deltaTime)
@@ -78,14 +90,58 @@ class GameDemo : ApplicationAdapter() {
         // Draw stage actors
         stage.draw()
 
+        // Draw input shapes
+        shapes.begin(ShapeRenderer.ShapeType.Filled)
+        shapes.color = Color.WHITE
+        if(input.touchDown) {
+            shapes.circle(input.origX, input.origY, 40f)
+        }
+        shapes.end()
+
         // Update FPS
         fpsCounter.update()
         fpsCounter.render()
 
     }
 
+    override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        return true
+    }
+
+    override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+        return true
+    }
+
+    override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        val actualXY = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+        input.origX = actualXY.x
+        input.origY = actualXY.y
+        input.touchDown = true
+        return true
+    }
+
     override fun dispose() {
         batch.dispose()
         rockImg.dispose()
+    }
+
+    override fun keyTyped(character: Char): Boolean {
+        return false
+    }
+
+    override fun scrolled(amount: Int): Boolean {
+        return false
+    }
+
+    override fun keyUp(keycode: Int): Boolean {
+        return false
+    }
+
+    override fun keyDown(keycode: Int): Boolean {
+        return false
+    }
+
+    override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
+        return false
     }
 }
