@@ -1,9 +1,6 @@
 package com.etirps.zhu.gamedemo
 
-import kotlin.math.atan
-import kotlin.math.ceil
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 data class InputData(var origX: Float = 0f,             var origY: Float = 0f,
                      var destX: Float = 0f,             var destY: Float = 0f,
@@ -12,6 +9,11 @@ data class InputData(var origX: Float = 0f,             var origY: Float = 0f,
     val distance: Float
         get() {
             return sqrt((destX - origX).pow(2) + (destY-origY).pow(2))
+        }
+
+    val powerLineDistance: Float
+        get() {
+            return sqrt((powerLineX - origX).pow(2) + (powerLineY-origY).pow(2))
         }
 
     val angle: Float
@@ -23,6 +25,38 @@ data class InputData(var origX: Float = 0f,             var origY: Float = 0f,
 
             angle += ceil(-angle / 360) * 360
 
-            return -1 * angle.toFloat()
+            return -angle.toFloat()
+        }
+
+    val powerLineAngle: Float
+        get() {
+            val opposite = powerLineX.toDouble() - origX.toDouble()
+            val adjacent = powerLineY.toDouble() - origY.toDouble()
+
+            val angle = atan2(opposite, adjacent)
+
+            //angle += ceil(-angle / 360) * 360
+
+            return angle.toFloat()
+        }
+
+    val powerLineX: Float
+        get() {
+            return if(distance < 400) {
+                destX
+            } else {
+                val ratio = 400 / distance
+                ((1 - ratio) * origX) + (ratio * destX)
+            }
+        }
+
+    val powerLineY: Float
+        get() {
+            return if(distance < 400) {
+                destY
+            } else {
+                val ratio = 400 / distance
+                ((1 - ratio) * origY) + (ratio * destY)
+            }
         }
 }
