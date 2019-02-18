@@ -69,8 +69,9 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val newPosY = (0..Gdx.graphics.height).random()
 
         // Get random speeds for x, y, and spin
-        val newSpeedX = Random.nextInt(from = -20, until = 20).toFloat() / 10f
-        val newSpeedY = Random.nextInt(from = -20, until = 20).toFloat() / 10f
+        val newSpeedX = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
+        val newSpeedY = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
+
         val newSpeedSpin = Random.nextInt(from = -20, until = 20).toFloat() / 100f
 
         // Create new rock
@@ -111,8 +112,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                             Vector2(player.x + player.height / 2 - (input.origX - input.destX),
                                     player.y + player.height /2 - (input.origY - input.destY)), 20f)
 
-            val angle = calculateAngle(input.origX, input.origY, input.destX, input.destY)
-            player.rotation = angle
+            player.rotation = input.angle
         }
         shapes.end()
 
@@ -120,17 +120,6 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         fpsCounter.update()
         fpsCounter.render()
 
-    }
-
-    private fun calculateAngle(origX: Float, origY: Float, destX: Float, destY: Float): Float {
-        val opposite = origX.toDouble() - destX.toDouble()
-        val adjacent = origY.toDouble() - destY.toDouble()
-
-        var angle = Math.toDegrees(atan(opposite / adjacent))
-
-        angle += ceil(-angle / 360) * 360
-
-        return -1 * angle.toFloat()
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
@@ -144,6 +133,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
         // Convert screen touch coordinates to game coordinates
         val actualXY = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+
+        // Do nothing if no distance was dragged
         if(input.origX - actualXY.x == 0f && input.origY - actualXY.y == 0f) {
             input.dragging = false
             return true
