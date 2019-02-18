@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
+import kotlin.math.*
 import kotlin.random.Random
 
 class GameDemo : ApplicationAdapter(), InputProcessor {
@@ -25,6 +26,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var input: InputData
 
     private lateinit var rockImg: Texture
+
+    private lateinit var player: Player
 
     override fun create() {
         // Get screen size for easier use
@@ -50,6 +53,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Initialize textures
         rockImg = Texture("ref.png")
+
+        // Initialize game objects
+        player = Player(screenWidth / 2, screenHeight / 2, rockImg)
+        stage.addActor(player)
 
         // Start the game
         spawnRock()
@@ -96,11 +103,16 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         shapes.color = Color.WHITE
         if(input.touchedDown) {
             // Draw a circle at initial touch point
-            shapes.circle(input.origX, input.origY, 20f)
+            shapes.circle(player.x + player.height / 2, player.y + player.height /2, 20f)
         }
         if(input.dragging) {
             // Draw a line to where finger is currently
-            shapes.rectLine(Vector2(input.origX, input.origY), Vector2(input.destX, input.destY), 20f)
+            shapes.rectLine(Vector2(player.x + player.height / 2, player.y + player.height /2),
+                            Vector2(player.x + player.height / 2 - (input.origX - input.destX),
+                                    player.y + player.height /2 - (input.origY - input.destY)), 20f)
+
+            val angle = calculateAngle(input.origX, input.origY, input.destX, input.destY)
+            player.rotation = angle
         }
         shapes.end()
 
@@ -110,14 +122,33 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
     }
 
+    private fun calculateAngle(origX: Float, origY: Float, destX: Float, destY: Float): Float {
+        val opposite = origX.toDouble() - destX.toDouble()
+        val adjacent = origY.toDouble() - destY.toDouble()
+
+        var angle = Math.toDegrees(atan(opposite / adjacent))
+
+        angle += ceil(-angle / 360) * 360
+
+        return -1 * angle.toFloat()
+    }
+
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         // Should unflag everything
+        input.touchedDown = false
+        input.dragging = false
+
         return true
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
         // Convert screen touch coordinates to game coordinates
         val actualXY = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+        if(input.origX - actualXY.x == 0f && input.origY - actualXY.y == 0f) {
+            input.dragging = false
+            return true
+        }
+
         // Set input data to touch data
         input.destX = actualXY.x
         input.destY = actualXY.y
