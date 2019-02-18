@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -93,8 +94,13 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Draw input shapes
         shapes.begin(ShapeRenderer.ShapeType.Filled)
         shapes.color = Color.WHITE
-        if(input.touchDown) {
-            shapes.circle(input.origX, input.origY, 40f)
+        if(input.touchedDown) {
+            // Draw a circle at initial touch point
+            shapes.circle(input.origX, input.origY, 20f)
+        }
+        if(input.dragging) {
+            // Draw a line to where finger is currently
+            shapes.rectLine(Vector2(input.origX, input.origY), Vector2(input.destX, input.destY), 20f)
         }
         shapes.end()
 
@@ -105,18 +111,29 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        // Should unflag everything
         return true
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+        // Convert screen touch coordinates to game coordinates
+        val actualXY = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+        // Set input data to touch data
+        input.destX = actualXY.x
+        input.destY = actualXY.y
+        // Set dragging flag to true, so renderer will draw the line
+        input.dragging = true
         return true
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        // Convert screen touch coordinates to game coordinates
         val actualXY = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+        // Set input data to touch data
         input.origX = actualXY.x
         input.origY = actualXY.y
-        input.touchDown = true
+        // set touched flag to true, so renderer will draw circle
+        input.touchedDown = true
         return true
     }
 
