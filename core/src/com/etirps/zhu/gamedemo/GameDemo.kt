@@ -105,17 +105,24 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     private fun checkCollision() {
-        for(rock in rocks) {
-            if(player.shield > 0) { break }
-
-            if(Intersector.overlapConvexPolygons(player.polygon, rock.polygon)) {
-                gameOver = true
-            }
-        }
 
         val deadBullets = mutableListOf<Bullet>()
         val deadRocks = mutableListOf<Rock>()
         val newRocks = mutableListOf<Rock>()
+
+        for(rock in rocks) {
+            if(player.shield > 0 || gameOver) { break }
+
+            if(Intersector.overlapConvexPolygons(player.polygon, rock.polygon)) {
+                gameOver = true
+                newRocks.addAll(rock.split())
+                rock.remove()
+                deadRocks.add(rock)
+                player.remove()
+            }
+        }
+
+        rocks.removeAll(deadRocks)
 
         for(bullet in bullets) {
             if(!bullet.active) {
@@ -146,7 +153,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         rocks.addAll(newRocks)
     }
 
-    fun actOnInput() {
+    private fun actOnInput() {
         if(input.touchedDown) {
             // Draw a circle at initial touch point
             shapes.circle(player.x + player.height / 2, player.y + player.height /2, 20f)
@@ -167,6 +174,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         }
     }
 
+    private fun updateHUD() {
+        batch.begin()
+
+        batch.end()
+    }
+
     override fun render() {
         // Clear screen with black color
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
@@ -183,18 +196,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         fpsCounter.update()
         fpsCounter.render()
 
-        /*
-        if(gameOver) {
-            batch.begin()
-            batch.draw(rockImg, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), 500f, 200f)
-            batch.end()
-            return
-        }*/
-
         // Update all actors in stage
-        if(!gameOver) {
-            stage.act(Gdx.graphics.deltaTime)
-        }
+        stage.act(Gdx.graphics.deltaTime)
 
         // Draw stage actors
         stage.draw()
