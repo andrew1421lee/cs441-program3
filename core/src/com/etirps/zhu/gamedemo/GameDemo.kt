@@ -17,6 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import kotlin.math.*
 import kotlin.random.Random
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+
+
 
 class GameDemo : ApplicationAdapter(), InputProcessor {
 
@@ -58,9 +61,14 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Setup fps counter + hud
         fpsCounter = FrameRate()
         fpsCounter.resize(screenWidth, screenHeight)
-        hud = BitmapFont()
-        hud.data.scale(2f)
-        hud.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+        val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("Roboto.TTF"))
+        val fontParameters = FreeTypeFontGenerator.FreeTypeFontParameter()
+        fontParameters.size = 60
+        hud = fontGenerator.generateFont(fontParameters)
+        fontGenerator.dispose()
+
+        //hud.data.scale(2f)
+        //hud.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
 
         // ENABLE OR DISABLE DEBUG MODE
         debugFont = BitmapFont()
@@ -175,8 +183,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     private fun updateHUD() {
-        batch.begin()
+        val speed = sqrt((player.x + player.speedX - player.x).pow(2) + (player.y + player.speedY - player.y).pow(2)).roundToInt()
 
+        batch.begin()
+        hud.draw(batch, "SPEED: $speed", 50f, 50f)
         batch.end()
     }
 
@@ -209,6 +219,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         if(!gameOver) {
             actOnInput()
         }
+
+        updateHUD()
 
         shapes.end()
 
