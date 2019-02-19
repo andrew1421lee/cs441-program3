@@ -9,21 +9,23 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 class Player (posX: Float, posY: Float,
               var texture: Texture,
               var speedX: Float = 0f,
-              var speedY: Float = 0f): Actor() {
+              var speedY: Float = 0f,
+              debugFont: BitmapFont? = null): Actor() {
 
-    private val font: BitmapFont
+    private val font: BitmapFont?
 
     init {
         x = posX
         y = posY
         width = 100f
         height = 100f
-        font = BitmapFont()
+        font = debugFont
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
-        font.draw(batch, rotation.toString(), x, y)
+
+        font?.draw(batch, "$rotation\n$speedX x $speedY", x, y)
     }
 
     override fun act(delta: Float) {

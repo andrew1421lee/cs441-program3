@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
@@ -24,6 +25,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var shapes: ShapeRenderer
     private lateinit var fpsCounter: FrameRate
     private lateinit var input: InputData
+    private var debugFont: BitmapFont? = null
 
     private lateinit var rockImg: Texture
 
@@ -51,11 +53,14 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         fpsCounter = FrameRate()
         fpsCounter.resize(screenWidth, screenHeight)
 
+        // ENABLE OR DISABLE DEBUG MODE
+        debugFont = BitmapFont()
+
         // Initialize textures
         rockImg = Texture("ref.png")
 
         // Initialize game objects
-        player = Player(screenWidth / 2, screenHeight / 2, rockImg)
+        player = Player(screenWidth / 2, screenHeight / 2, rockImg, debugFont = debugFont)
         stage.addActor(player)
 
         // Start the game
@@ -137,7 +142,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val opposite = sin(input.powerLineAngle) * input.powerLineDistance
 
         // Create new bullet
-        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 20f, adjacent / 20f), rockImg)
+        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 20f, adjacent / 20f), rockImg, debugFont)
         player.speedX += -opposite / 20f
         player.speedY += -adjacent / 20f
         stage.addActor(bullet)

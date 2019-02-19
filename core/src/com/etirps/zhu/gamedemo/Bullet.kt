@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 
-class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var texture: Texture): Actor() {
+class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var texture: Texture, debugFont: BitmapFont? = null): Actor() {
 
     private var distanceTraveled: Float
-    private val font: BitmapFont
+    private val font: BitmapFont?
 
     init {
         x = posX
@@ -19,13 +19,13 @@ class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var tex
         height = 20f
         rotation = angle
         distanceTraveled = 0f
-        font = BitmapFont()
+        font = debugFont
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
 
-        font.draw(batch, "$rotation\n${speed.x} x ${speed.y}", x, y)
+        font?.draw(batch, "$rotation\n${speed.x} x ${speed.y}", x, y)
     }
 
     override fun act(delta: Float) {
