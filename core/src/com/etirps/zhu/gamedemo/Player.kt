@@ -25,7 +25,7 @@ class Player (posX: Float, posY: Float,
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
 
-        font?.draw(batch, "$rotation\n$speedX x $speedY", x, y)
+        font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:$speedX x $speedY", x, y)
     }
 
     override fun act(delta: Float) {

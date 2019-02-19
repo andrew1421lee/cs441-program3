@@ -24,7 +24,7 @@ class Rock(posX: Float,             posY: Float,
     // Draw rock on screen
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, size / 2, size / 2, size, size, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
-        font?.draw(batch, "$rotation\n$speedX x $speedY", x, y)
+        font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:$speedX x $speedY\nspin:$speedSpin", x, y)
     }
 
     // Update rock positions and rotation

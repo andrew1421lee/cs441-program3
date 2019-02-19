@@ -143,7 +143,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Create new bullet
         val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 20f, adjacent / 20f), rockImg, debugFont)
-        
+
         player.speedX += -opposite / 20f
         player.speedY += -adjacent / 20f
 
