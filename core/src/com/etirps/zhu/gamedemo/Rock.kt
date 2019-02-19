@@ -3,22 +3,28 @@ package com.etirps.zhu.gamedemo
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 
 class Rock(posX: Float,             posY: Float,
            var texture: Texture,    var size: Float = 200f,
            var speedX: Float = 1f,  var speedY: Float = 1f,
-           var speedSpin: Float = 0.1f): Actor() {
+           var speedSpin: Float = 0.1f,
+           debugFont: BitmapFont? = null): Actor() {
+
+    private val font: BitmapFont?
 
     // Set actor x,y to given by constructor
     init {
         x = posX
         y = posY
+        font = debugFont
     }
 
     // Draw rock on screen
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, size / 2, size / 2, size, size, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
+        font?.draw(batch, "$rotation\n$speedX x $speedY", x, y)
     }
 
     // Update rock positions and rotation
