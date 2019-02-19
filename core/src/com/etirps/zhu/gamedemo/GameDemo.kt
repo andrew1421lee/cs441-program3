@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -26,10 +27,15 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var fpsCounter: FrameRate
     private lateinit var input: InputData
     private var debugFont: BitmapFont? = null
+    private lateinit var hud: BitmapFont
 
     private lateinit var rockImg: Texture
 
     private lateinit var player: Player
+    private lateinit var rocks: MutableList<Rock>
+    private lateinit var bullets: MutableList<Bullet>
+
+    var gameOver = false
 
     override fun create() {
         // Get screen size for easier use
@@ -49,9 +55,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         Gdx.input.inputProcessor = this
         input = InputData()
 
-        // Setup fps counter
+        // Setup fps counter + hud
         fpsCounter = FrameRate()
         fpsCounter.resize(screenWidth, screenHeight)
+        hud = BitmapFont()
+        hud.data.scale(2f)
+        hud.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
 
         // ENABLE OR DISABLE DEBUG MODE
         debugFont = BitmapFont()
@@ -62,8 +71,13 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Initialize game objects
         player = Player(screenWidth / 2, screenHeight / 2, rockImg, debugFont = debugFont)
         stage.addActor(player)
+        rocks = mutableListOf()
+        bullets = mutableListOf()
 
         // Start the game
+        spawnRock()
+        spawnRock()
+        spawnRock()
         spawnRock()
         spawnRock()
     }
@@ -74,8 +88,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val newPosY = (0..Gdx.graphics.height).random()
 
         // Get random speeds for x, y, and spin
-        val newSpeedX = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
-        val newSpeedY = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
+        var newSpeedX = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
+        if(newSpeedX == 0f) { newSpeedX = 1f }
+
+        var newSpeedY = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
+        if(newSpeedY == 0f) { newSpeedY = 1f }
 
         val newSpeedSpin = Random.nextInt(from = -20, until = 20).toFloat() / 100f
 
@@ -83,7 +100,71 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg, speedX = newSpeedX, speedY = newSpeedY, speedSpin = newSpeedSpin, debugFont = debugFont)
 
         // Add rock to stage
+        rocks.add(rock)
         stage.addActor(rock)
+    }
+
+    private fun checkCollision() {
+        for(rock in rocks) {
+            if(player.shield > 0) { break }
+
+            if(Intersector.overlapConvexPolygons(player.polygon, rock.polygon)) {
+                gameOver = true
+            }
+        }
+
+        val deadBullets = mutableListOf<Bullet>()
+        val deadRocks = mutableListOf<Rock>()
+        val newRocks = mutableListOf<Rock>()
+
+        for(bullet in bullets) {
+            if(!bullet.active) {
+                deadBullets.add(bullet)
+                continue
+            }
+
+            for(rock in rocks) {
+                if(Intersector.overlapConvexPolygons(bullet.polygon, rock.polygon)) {
+                    newRocks.addAll(rock.split())
+
+                    bullet.remove()
+                    rock.remove()
+
+                    deadRocks.add(rock)
+                    deadBullets.add(bullet)
+                }
+            }
+        }
+
+        bullets.removeAll(deadBullets)
+        rocks.removeAll(deadRocks)
+
+        for(newRock in newRocks) {
+            stage.addActor(newRock)
+        }
+
+        rocks.addAll(newRocks)
+    }
+
+    fun actOnInput() {
+        if(input.touchedDown) {
+            // Draw a circle at initial touch point
+            shapes.circle(player.x + player.height / 2, player.y + player.height /2, 20f)
+        }
+
+        if(input.dragging) {
+            // Draw a line to where finger is currently
+            shapes.rectLine(Vector2(player.x + player.height / 2, player.y + player.height /2),
+                    Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
+                            player.y + player.height /2 - (input.origY - input.powerLineY)), 20f)
+
+            shapes.rectLine(Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
+                    player.y + player.height /2 - (input.origY - input.powerLineY)),
+                    Vector2(player.x + player.height / 2 - (input.origX - input.destX),
+                            player.y + player.height /2 - (input.origY - input.destY)), 3f)
+
+            player.rotation = input.angle
+        }
     }
 
     override fun render() {
@@ -98,8 +179,22 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         batch.projectionMatrix = camera.combined
         shapes.projectionMatrix = camera.combined
 
+        // Update FPS
+        fpsCounter.update()
+        fpsCounter.render()
+
+        /*
+        if(gameOver) {
+            batch.begin()
+            batch.draw(rockImg, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), 500f, 200f)
+            batch.end()
+            return
+        }*/
+
         // Update all actors in stage
-        stage.act(Gdx.graphics.deltaTime)
+        if(!gameOver) {
+            stage.act(Gdx.graphics.deltaTime)
+        }
 
         // Draw stage actors
         stage.draw()
@@ -107,33 +202,19 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Draw input shapes
         shapes.begin(ShapeRenderer.ShapeType.Filled)
         shapes.color = Color.WHITE
-        if(input.touchedDown) {
-            // Draw a circle at initial touch point
-            shapes.circle(player.x + player.height / 2, player.y + player.height /2, 20f)
-        }
-        if(input.dragging) {
-            // Draw a line to where finger is currently
-            shapes.rectLine(Vector2(player.x + player.height / 2, player.y + player.height /2),
-                            Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
-                                    player.y + player.height /2 - (input.origY - input.powerLineY)), 20f)
 
-            shapes.rectLine(Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
-                                    player.y + player.height /2 - (input.origY - input.powerLineY)),
-                            Vector2(player.x + player.height / 2 - (input.origX - input.destX),
-                                    player.y + player.height /2 - (input.origY - input.destY)), 3f)
-
-            player.rotation = input.angle
+        if(!gameOver) {
+            actOnInput()
         }
+
         shapes.end()
 
-        // Update FPS
-        fpsCounter.update()
-        fpsCounter.render()
+        checkCollision()
 
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if(!input.dragging) {
+        if(!input.dragging || gameOver) {
             input.touchedDown = false
             return true
         }
@@ -147,7 +228,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         player.speedX += -opposite / 20f
         player.speedY += -adjacent / 20f
 
-
+        bullets.add(bullet)
         stage.addActor(bullet)
 
         // Should unflag everything
