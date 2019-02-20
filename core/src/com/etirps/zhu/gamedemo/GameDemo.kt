@@ -233,7 +233,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
 
         if(player.shield > 0) {
-            hud.draw(batch, "SHIELD! - ${player.shield}", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
+            hud.draw(batch, "INVINCIBLE", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
+            hud.draw(batch, "${player.shield}", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
         }
 
         if(gameOver) {
