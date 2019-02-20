@@ -41,6 +41,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var rocks: MutableList<Rock>
     private lateinit var bullets: MutableList<Bullet>
 
+
+    var coolDown = 500
     var gameOver = false
 
     override fun create() {
@@ -84,17 +86,37 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
 
         // Initialize game objects
-        player = Player(screenWidth / 2, screenHeight / 2, playerImg, debugFont = debugFont)
-        stage.addActor(player)
+
         rocks = mutableListOf()
         bullets = mutableListOf()
 
         // Start the game
+        setupStage()
+    }
+
+    private fun setupStage() {
+        coolDown = 500
+        player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
+        stage.addActor(player)
         spawnRock()
         spawnRock()
         spawnRock()
         spawnRock()
         spawnRock()
+    }
+
+    private fun clearStage() {
+        for (rock in rocks) {
+            rock.remove()
+        }
+        rocks.clear()
+
+        for (bullet in bullets) {
+            bullet.remove()
+        }
+        bullets.clear()
+
+        player.remove()
     }
 
     private fun spawnRock() {
@@ -210,8 +232,19 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
         hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
 
+        if(player.shield > 0) {
+            hud.draw(batch, "SHIELD! - ${player.shield}", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
+        }
+
         if(gameOver) {
-            hud.draw(batch, "GAME OVER", Gdx.graphics.width / 2 - 100f, Gdx.graphics.height / 2f)
+            hud.draw(batch, "GAME OVER", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
+            if(coolDown > 0) {
+                hud.draw(batch, "$coolDown", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
+                coolDown -= 5
+            } else {
+                hud.draw(batch, "TOUCH TO RETRY", Gdx.graphics.width / 2f - 175f, Gdx.graphics.height / 2f - 100f)
+            }
+
         }
 
         batch.end()
@@ -256,6 +289,15 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        if(gameOver && coolDown <= 0) {
+            input.touchedDown = false
+            input.dragging = false
+            gameOver = false
+            clearStage()
+            setupStage()
+            return true
+        }
+
         if(!input.dragging || gameOver) {
             input.touchedDown = false
             return true
