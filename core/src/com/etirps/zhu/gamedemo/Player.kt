@@ -19,6 +19,7 @@ class Player (posX: Float, posY: Float,
     var shield: Int
     var bounds: Rectangle
     var polygon: Polygon
+    var score: Int
 
 
     init {
@@ -28,6 +29,7 @@ class Player (posX: Float, posY: Float,
         height = 100f
         font = debugFont
         shield = 3000
+        score = 0
 
         bounds = Rectangle(x, y, width, height)
         polygon = Polygon(floatArrayOf( 0f,             0f,

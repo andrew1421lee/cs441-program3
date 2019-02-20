@@ -162,6 +162,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
                     stage.addActor(Explosion(rock.x - rock.size * 0.5f / 2, rock.y - rock.size * 0.5f / 2, rock.size * 0.5f, explosionImg, 1000f, debugFont = debugFont))
                     stage.addActor(Explosion(rock.x - rock.size / 2, rock.y - rock.size / 2, rock.size, explosionImg, debugFont = debugFont))
+
+                    player.score += 250 - rock.size.toInt()
                 }
             }
         }
@@ -198,10 +200,14 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     private fun updateHUD() {
-        val speed = sqrt((player.x + player.speedX - player.x).pow(2) + (player.y + player.speedY - player.y).pow(2)).roundToInt()
+        //val speed = String.format("%.1f", sqrt((player.x + player.speedX - player.x).pow(2) + (player.y + player.speedY - player.y).pow(2)))
+        val speedX = String.format("%.1f", player.speedX)
+        val speedY= String.format("%.1f", player.speedY)
 
         batch.begin()
-        hud.draw(batch, "SPEED: $speed", 50f, 50f)
+        hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 400f, Gdx.graphics.height - 50f)
+        hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
+        hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
         batch.end()
     }
 
