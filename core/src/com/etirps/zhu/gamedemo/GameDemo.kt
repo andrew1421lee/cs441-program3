@@ -64,7 +64,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         input = InputData()
 
         // Setup fps counter + hud
-        fpsCounter = FrameRate()
+        fpsCounter = FrameRate(debugFont)
         fpsCounter.resize(screenWidth, screenHeight)
         val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("Roboto.TTF"))
         val fontParameters = FreeTypeFontGenerator.FreeTypeFontParameter()
@@ -91,6 +91,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
     private fun setupStage() {
         coolDown = 500
+
+        input.origX = 0f
+        input.origY = 0f
+        input.destX = 0f
+        input.destY = 0f
+
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
         stage.addActor(player)
         spawnRock(5)
@@ -294,7 +300,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         fpsCounter.update()
         fpsCounter.render()
 
-        player.rotation = input.angle
+        if(input.angle.isNaN()) {
+            player.rotation = 0f
+        } else {
+            player.rotation = input.angle
+        }
 
         // Update all actors in stage
         stage.act(Gdx.graphics.deltaTime)
