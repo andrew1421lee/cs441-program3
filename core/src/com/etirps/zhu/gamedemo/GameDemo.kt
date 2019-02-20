@@ -209,6 +209,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 400f, Gdx.graphics.height - 50f)
         hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
         hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
+
+        if(gameOver) {
+            hud.draw(batch, "GAME OVER", Gdx.graphics.width / 2 - 100f, Gdx.graphics.height / 2f)
+        }
+
         batch.end()
     }
 
