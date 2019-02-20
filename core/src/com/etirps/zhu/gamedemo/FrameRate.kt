@@ -13,11 +13,11 @@ import com.badlogic.gdx.utils.TimeUtils
  *
  * @author Original Java by William Hartman, Kotlin conversion by Anchu Lee
  */
-class FrameRate : Disposable {
+class FrameRate (debugFont: BitmapFont?) : Disposable {
     private var lastTimeCounted: Long
     private var sinceChange: Float
     private var frameRate: Float
-    private val font: BitmapFont
+    private val font: BitmapFont?
     private val batch: SpriteBatch
     private var camera: OrthographicCamera
 
@@ -25,9 +25,10 @@ class FrameRate : Disposable {
         lastTimeCounted = TimeUtils.millis()
         sinceChange = 0f
         frameRate = Gdx.graphics.framesPerSecond.toFloat()
-        font = BitmapFont()
         batch = SpriteBatch()
         camera = OrthographicCamera(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+
+        font = debugFont
     }
 
     fun resize(screenWidth: Float, screenHeight: Float) {
@@ -38,24 +39,28 @@ class FrameRate : Disposable {
     }
 
     fun update() {
-        val delta = TimeUtils.timeSinceMillis(lastTimeCounted)
-        lastTimeCounted = TimeUtils.millis()
+        if(font != null) {
+            val delta = TimeUtils.timeSinceMillis(lastTimeCounted)
+            lastTimeCounted = TimeUtils.millis()
 
-        sinceChange += delta.toFloat()
-        if (sinceChange >= 1000) {
-            sinceChange = 0f
-            frameRate = Gdx.graphics.framesPerSecond.toFloat()
+            sinceChange += delta.toFloat()
+            if (sinceChange >= 1000) {
+                sinceChange = 0f
+                frameRate = Gdx.graphics.framesPerSecond.toFloat()
+            }
         }
     }
 
     fun render() {
-        batch.begin()
-        font.draw(batch, frameRate.toInt().toString() + " fps", 5f, (Gdx.graphics.height - 5).toFloat())
-        batch.end()
+        if(font != null) {
+            batch.begin()
+            font.draw(batch, frameRate.toInt().toString() + " fps", 5f, (Gdx.graphics.height - 5).toFloat())
+            batch.end()
+        }
     }
 
     override fun dispose() {
-        font.dispose()
+        font?.dispose()
         batch.dispose()
     }
 }
