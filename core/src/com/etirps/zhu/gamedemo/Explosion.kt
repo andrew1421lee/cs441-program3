@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 
-class Explosion(posX: Float, posY: Float, size: Float, var texture: Texture, debugFont: BitmapFont? = null): Actor() {
+class Explosion(posX: Float, posY: Float, size: Float, var texture: Texture, duration: Float = 500f, debugFont: BitmapFont? = null): Actor() {
 
     private var life: Float
     private val font: BitmapFont?
@@ -21,7 +21,7 @@ class Explosion(posX: Float, posY: Float, size: Float, var texture: Texture, deb
 
         font = debugFont
 
-        life = 500f
+        life = duration
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {

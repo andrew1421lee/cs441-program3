@@ -35,6 +35,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var rockImg: Texture
     private lateinit var explosionImg: Texture
     private lateinit var bulletImg: Texture
+    private lateinit var playerImg: Texture
 
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
@@ -73,15 +74,17 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         //hud.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
 
         // ENABLE OR DISABLE DEBUG MODE
-        debugFont = BitmapFont()
+        //debugFont = BitmapFont()
 
         // Initialize textures
-        rockImg = Texture("ref.png")
+        rockImg = Texture("rock5.png")
         explosionImg = Texture("explosion2.png")
         bulletImg = Texture("bullet.png")
+        playerImg = Texture("player.png")
+
 
         // Initialize game objects
-        player = Player(screenWidth / 2, screenHeight / 2, rockImg, debugFont = debugFont)
+        player = Player(screenWidth / 2, screenHeight / 2, playerImg, debugFont = debugFont)
         stage.addActor(player)
         rocks = mutableListOf()
         bullets = mutableListOf()
@@ -130,6 +133,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 newRocks.addAll(rock.split())
                 rock.remove()
                 deadRocks.add(rock)
+
+                stage.addActor(Explosion(player.x - player.width / 2, player.y - player.width / 2, player.width, explosionImg, 2000f, debugFont =  debugFont))
+                stage.addActor(Explosion(player.x - player.width * 2f / 2, player.y - player.width * 2f / 2, player.width * 2f, explosionImg, 1000f, debugFont))
+                stage.addActor(Explosion(player.x - player.width * 3f / 2, player.y - player.width * 3f / 2, player.width * 3f, explosionImg, 500f, debugFont))
+
                 player.remove()
             }
         }
@@ -152,7 +160,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     deadRocks.add(rock)
                     deadBullets.add(bullet)
 
-                    stage.addActor(Explosion(rock.x - rock.size / 2, rock.y - rock.size / 2, rock.size * 1.5f, explosionImg, debugFont))
+                    stage.addActor(Explosion(rock.x - rock.size * 0.5f / 2, rock.y - rock.size * 0.5f / 2, rock.size * 0.5f, explosionImg, 1000f, debugFont = debugFont))
+                    stage.addActor(Explosion(rock.x - rock.size / 2, rock.y - rock.size / 2, rock.size, explosionImg, debugFont = debugFont))
                 }
             }
         }
@@ -170,14 +179,14 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private fun actOnInput() {
         if(input.touchedDown) {
             // Draw a circle at initial touch point
-            shapes.circle(player.x + player.height / 2, player.y + player.height /2, 20f)
+            shapes.circle(player.x + player.height / 2, player.y + player.height /2, 10f)
         }
 
         if(input.dragging) {
             // Draw a line to where finger is currently
             shapes.rectLine(Vector2(player.x + player.height / 2, player.y + player.height /2),
                     Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
-                            player.y + player.height /2 - (input.origY - input.powerLineY)), 20f)
+                            player.y + player.height /2 - (input.origY - input.powerLineY)), 10f)
 
             shapes.rectLine(Vector2(player.x + player.height / 2 - (input.origX - input.powerLineX),
                     player.y + player.height /2 - (input.origY - input.powerLineY)),
