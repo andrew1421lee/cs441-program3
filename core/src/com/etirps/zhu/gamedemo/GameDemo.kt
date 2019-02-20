@@ -243,7 +243,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 hud.draw(batch, "$coolDown", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
                 coolDown -= 5
             } else {
-                hud.draw(batch, "TOUCH TO RETRY", Gdx.graphics.width / 2f - 175f, Gdx.graphics.height / 2f - 100f)
+                hud.draw(batch, "TOUCH TO PLAY AGAIN", Gdx.graphics.width / 2f - 250f, Gdx.graphics.height / 2f - 100f)
             }
 
         }
@@ -310,8 +310,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Create new bullet
         val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 30f, adjacent / 30f), bulletImg, debugFont)
 
-        player.speedX += -opposite / 30f
-        player.speedY += -adjacent / 30f
+        player.speedX += -opposite / 80f
+        player.speedY += -adjacent / 80f
 
         bullets.add(bullet)
         stage.addActor(bullet)
