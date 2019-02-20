@@ -92,6 +92,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private fun setupStage() {
         coolDown = 500
 
+        // Reset input values
         input.origX = 0f
         input.origY = 0f
         input.destX = 0f
@@ -248,7 +249,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         shapes.end()
     }
 
-    private fun updateHUD() {
+    private fun drawHUD() {
         // Get values to display on HUD
         //val speed = String.format("%.1f", sqrt((player.x + player.speedX - player.x).pow(2) + (player.y + player.speedY - player.y).pow(2)))
         val speedX = String.format("%.1f", player.speedX)
@@ -284,6 +285,50 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         batch.end()
     }
 
+    private fun fire() {
+        // Discover power level based on input distance
+        val adjacent = cos(input.aimingAngle) * input.aimingDistance
+        val opposite = sin(input.aimingAngle) * input.aimingDistance
+
+        // Create new bullet
+        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 30f, adjacent / 30f), bulletImg, debugFont)
+
+        // Push the player in the other direction
+        player.speedX += -opposite / 80f
+        player.speedY += -adjacent / 80f
+
+        // Add bullets to stage
+        bullets.add(bullet)
+        stage.addActor(bullet)
+    }
+
+    private fun checkOnTouch() {
+        // If flag is set
+        if(input.touchedUp) {
+            // if game is not over
+            if(!gameOver) {
+                // Fire bullet
+                fire()
+            // Check if game over cool down is over
+            } else if(coolDown <= 0) {
+                // Reset input flags
+                input.touchedUp = false
+                input.touchedDown = false
+                input.dragging = false
+                // Reset the game
+                gameOver = false
+                clearStage()
+                setupStage()
+                return
+            }
+        }
+
+        // Reset all input flags
+        input.touchedUp = false
+        input.touchedDown = false
+        input.dragging = false
+    }
+
     override fun render() {
         // Clear screen with black color
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
@@ -317,41 +362,15 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             drawAimingReticule()
         }
 
-        updateHUD()
+        checkOnTouch()
+        drawHUD()
         checkCollision()
 
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if(gameOver && coolDown <= 0) {
-            input.touchedDown = false
-            input.dragging = false
-            gameOver = false
-            clearStage()
-            setupStage()
-            return true
-        }
-
-        if(!input.dragging || gameOver) {
-            input.touchedDown = false
-            return true
-        }
-        // Discover what direction the bullet should be firing
-        val adjacent = cos(input.aimingAngle) * input.aimingDistance
-        val opposite = sin(input.aimingAngle) * input.aimingDistance
-
-        // Create new bullet
-        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 30f, adjacent / 30f), bulletImg, debugFont)
-
-        player.speedX += -opposite / 80f
-        player.speedY += -adjacent / 80f
-
-        bullets.add(bullet)
-        stage.addActor(bullet)
-
-        // Should unflag everything
-        input.touchedDown = false
-        input.dragging = false
+        // Set flag
+        input.touchedUp = true
 
         return true
     }
