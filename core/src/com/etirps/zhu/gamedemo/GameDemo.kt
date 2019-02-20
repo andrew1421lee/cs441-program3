@@ -33,6 +33,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var hud: BitmapFont
 
     private lateinit var rockImg: Texture
+    private lateinit var explosionImg: Texture
 
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
@@ -75,6 +76,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Initialize textures
         rockImg = Texture("ref.png")
+        explosionImg = Texture("explosion2.png")
 
         // Initialize game objects
         player = Player(screenWidth / 2, screenHeight / 2, rockImg, debugFont = debugFont)
@@ -147,6 +149,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
                     deadRocks.add(rock)
                     deadBullets.add(bullet)
+
+                    stage.addActor(Explosion(rock.x - rock.size / 2, rock.y - rock.size / 2, rock.size * 1.5f, explosionImg, debugFont))
                 }
             }
         }
@@ -238,10 +242,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val opposite = sin(input.powerLineAngle) * input.powerLineDistance
 
         // Create new bullet
-        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 20f, adjacent / 20f), rockImg, debugFont)
+        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 30f, adjacent / 30f), rockImg, debugFont)
 
-        player.speedX += -opposite / 20f
-        player.speedY += -adjacent / 20f
+        player.speedX += -opposite / 30f
+        player.speedY += -adjacent / 30f
 
         bullets.add(bullet)
         stage.addActor(bullet)
