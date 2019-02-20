@@ -109,7 +109,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         var newSpeedY = (Random.nextInt(from = 10, until = 20).toFloat() / 10f) * (-1..1).random()
         if(newSpeedY == 0f) { newSpeedY = 1f }
 
-        val newSpeedSpin = Random.nextInt(from = -20, until = 20).toFloat() / 100f
+        var newSpeedSpin = Random.nextInt(from = 10, until = 20).toFloat() / 75f * (-1..1).random()
+        if(newSpeedSpin == 0f) { newSpeedSpin = 10f / 75f }
 
         // Create new rock
         val rock = Rock(newPosX.toFloat(), newPosY.toFloat(), rockImg, speedX = newSpeedX, speedY = newSpeedY, speedSpin = newSpeedSpin, debugFont = debugFont)

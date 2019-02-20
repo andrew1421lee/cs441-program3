@@ -45,8 +45,8 @@ class Rock(posX: Float,             posY: Float,
         var dirModifierY = (1..2).random() * (-1..1).random()
         if(dirModifierY == 0) { dirModifierY = 1 }
 
-        return listOf(  Rock(x, y, texture, size = size / 2, speedX = speedX * dirModifierX, speedY = speedY * dirModifierY, speedSpin = speedSpin, debugFont = font),
-                        Rock(x, y, texture, size = size / 2, speedX = speedX * -dirModifierX, speedY = speedY * -dirModifierY, speedSpin = -speedSpin, debugFont = font))
+        return listOf(  Rock(x, y, texture, size = size / 2, speedX = speedX * dirModifierX, speedY = speedY * dirModifierY, speedSpin = speedSpin * 1.25f, debugFont = font),
+                        Rock(x, y, texture, size = size / 2, speedX = speedX * -dirModifierX, speedY = speedY * -dirModifierY, speedSpin = -speedSpin * 1.25f, debugFont = font))
     }
 
     // Draw rock on screen
