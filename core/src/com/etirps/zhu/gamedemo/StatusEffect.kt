@@ -7,13 +7,26 @@ enum class StatusTypes { DEFAULT, INVINCIBLE, ROCK }
 
 abstract class StatusEffect {
 
+    companion object {
+        fun createStatusEffect(): StatusEffect? {
+            val randomIndex = (0..StatusTypes.values().size).random()
+            val newType: StatusTypes = StatusTypes.values()[randomIndex]
+
+            return when(newType) {
+                StatusTypes.INVINCIBLE -> InvincibleEffect()
+                StatusTypes.ROCK -> RockEffect()
+                StatusTypes.DEFAULT -> null
+            }
+        }
+    }
+
     var duration: Float = 5f
     var timeRemaining: Float = duration
     var type: StatusTypes = StatusTypes.DEFAULT
     var lastTime: Long = TimeUtils.millis()
     var enabled: Boolean = true
 
-    fun updateDuration() {
+    private fun updateDuration() {
         val timeElapsed = TimeUtils.millis() - lastTime
 
         timeRemaining =  duration - timeElapsed / 1000f
