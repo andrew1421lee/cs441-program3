@@ -252,16 +252,16 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private fun drawHUD() {
         // Get values to display on HUD
         //val speed = String.format("%.1f", sqrt((player.x + player.speedX - player.x).pow(2) + (player.y + player.speedY - player.y).pow(2)))
-        val speedX = String.format("%.1f", player.speedX)
-        val speedY= String.format("%.1f", player.speedY)
+        //val speedX = String.format("%.1f", player.speedX)
+        //val speedY= String.format("%.1f", player.speedY)
 
         // Start drawing the hud
         batch.begin()
         // Draw the score display
-        hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 400f, Gdx.graphics.height - 50f)
+        hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 500f, Gdx.graphics.height - 50f)
         // Draw speedometers
-        hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
-        hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
+        //hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
+        //hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
 
         // Draw status effects
         // Used to offset from the top
