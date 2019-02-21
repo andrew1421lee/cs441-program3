@@ -285,12 +285,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Check for game over
         if(gameOver) {
-            hud.draw(batch, "GAME OVER", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
+            hud.draw(batch, "GAME OVER", (Gdx.graphics.width / 2f) - 200f, (Gdx.graphics.height / 2f) + 60f)
             if(coolDown > 0) {
-                hud.draw(batch, "$coolDown", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
+                hud.draw(batch, "$coolDown", (Gdx.graphics.width / 2f) - 200f, (Gdx.graphics.height / 2f))
                 coolDown -= 1
             } else {
-                hud.draw(batch, "TOUCH TO PLAY AGAIN", Gdx.graphics.width / 2f - 250f, Gdx.graphics.height / 2f - 100f)
+                hud.draw(batch, "TRY AGAIN?", (Gdx.graphics.width / 2f) - 200f, (Gdx.graphics.height / 2f))
             }
         }
 
