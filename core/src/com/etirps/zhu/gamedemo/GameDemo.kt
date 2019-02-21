@@ -380,6 +380,9 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 clearStage()
                 setupStage()
                 return
+            } else {
+                input.touchedUp = false
+                input.dragging = false
             }
         }
     }
