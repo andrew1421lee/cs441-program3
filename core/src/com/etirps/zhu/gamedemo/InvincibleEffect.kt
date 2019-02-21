@@ -10,17 +10,10 @@ class InvincibleEffect(time: Float) : StatusEffect() {
         type = StatusTypes.INVINCIBLE
     }
 
-    override fun apply(actor: Actor) {
-
-        if(enabled) {
-            if(actor is Player) {
-                actor.shielded = true
-            }
-        } else {
-            remove(actor)
+    override fun applyEffect(actor: Actor) {
+        if(actor is Player) {
+            actor.shielded = true
         }
-
-        updateDuration()
     }
 
     override fun remove(actor: Actor) {

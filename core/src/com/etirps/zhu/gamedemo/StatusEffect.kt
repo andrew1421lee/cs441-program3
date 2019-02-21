@@ -23,11 +23,21 @@ abstract class StatusEffect {
         }
     }
 
+    fun apply(actor: Actor) {
+        if(enabled) {
+            applyEffect(actor)
+        } else {
+            remove(actor)
+        }
+
+        updateDuration()
+    }
+
     override fun toString(): String {
         return type.toString()
     }
 
-    abstract fun apply(actor: Actor)
+    abstract fun applyEffect(actor: Actor)
 
     abstract fun remove(actor: Actor)
 
