@@ -42,7 +42,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var bullets: MutableList<Bullet>
 
 
-    var coolDown = 500
+    var coolDown = 100
     var gameOver = false
 
     override fun create() {
@@ -91,7 +91,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     private fun setupStage() {
-        coolDown = 500
+        coolDown = 100
 
         // Reset input values
         input.origX = 0f
@@ -288,7 +288,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             hud.draw(batch, "GAME OVER", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
             if(coolDown > 0) {
                 hud.draw(batch, "$coolDown", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
-                coolDown -= 5
+                coolDown -= 1
             } else {
                 hud.draw(batch, "TOUCH TO PLAY AGAIN", Gdx.graphics.width / 2f - 250f, Gdx.graphics.height / 2f - 100f)
             }
