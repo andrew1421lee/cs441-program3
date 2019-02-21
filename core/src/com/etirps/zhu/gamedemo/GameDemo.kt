@@ -41,12 +41,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
     private lateinit var invinciblePowerUpImg: Texture
     private lateinit var heavyPowerUpImg: Texture
+    private lateinit var lightPowerUpImg: Texture
 
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
     private lateinit var bullets: MutableList<Bullet>
     private lateinit var powerups: MutableList<PowerUp>
-
 
     var coolDown = 100
     var gameOver = false
@@ -90,6 +90,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         heavyPowerUpImg = Texture("heavy_power.png")
         invinciblePowerUpImg = Texture("invincible_power.png")
+        lightPowerUpImg = Texture("light_power.png")
 
         // Initialize game objects
         rocks = mutableListOf()
@@ -98,6 +99,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         powerUpBuilder = PowerUpBuilder(debugFont)
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.HEAVY, heavyPowerUpImg))
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.INVINCIBLE, invinciblePowerUpImg))
+        powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.LIGHT, lightPowerUpImg))
 
         // Start the game
         setupStage()
@@ -114,6 +116,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
         player.addStatusEffect(InvincibleEffect(5f))
+        player.addStatusEffect(LightEffect(5f))
+        player.addStatusEffect(HeavyEffect(5f))
 
         stage.addActor(player)
         spawnRock(5)
