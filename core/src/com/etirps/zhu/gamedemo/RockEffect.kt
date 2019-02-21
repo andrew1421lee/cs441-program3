@@ -12,16 +12,14 @@ class RockEffect(time: Float): StatusEffect() {
     override fun applyEffect(actor: Actor) {
 
         if(actor is Player) {
-            actor.speedX = 0f
-            actor.speedY = 0f
+            actor.mass = 320f
         }
 
     }
 
     override fun remove(actor: Actor) {
         if(actor is Player) {
-            //actor.shielded = false
-            actor.removeStatusEffect(this)
+            actor.mass = 80f
         }
     }
 }

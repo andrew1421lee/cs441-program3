@@ -20,6 +20,7 @@ class Player (posX: Float, posY: Float,
     var bounds: Rectangle
     var polygon: Polygon
     var score: Int
+    var mass: Float
 
     private var statusEffects: MutableList<StatusEffect>
     private var removedStatusEffects: MutableList<StatusEffect>
@@ -32,6 +33,7 @@ class Player (posX: Float, posY: Float,
         font = debugFont
         shielded = false
         score = 0
+        mass = 80f
 
         statusEffects = mutableListOf()
         removedStatusEffects = mutableListOf()
@@ -50,9 +52,10 @@ class Player (posX: Float, posY: Float,
         statusEffects.add(statusEffect)
     }
 
+    /*
     fun removeStatusEffect(statusEffect: StatusEffect) {
         statusEffects.remove(statusEffect)
-    }
+    }*/
 
     fun getStatusEffects(): List<StatusEffect> {
         return statusEffects.toList()
