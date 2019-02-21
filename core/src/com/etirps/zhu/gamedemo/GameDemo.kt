@@ -353,7 +353,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 hud.draw(batch, "$coolDown", (Gdx.graphics.width / 2f) - 300f, (Gdx.graphics.height / 2f))
                 coolDown -= 1
             } else {
-                hud.draw(batch, "READY?", (Gdx.graphics.width / 2f) - 200f, (Gdx.graphics.height / 2f))
+                hud.draw(batch, "READY?", (Gdx.graphics.width / 2f) - 300f, (Gdx.graphics.height / 2f))
             }
         }
 
