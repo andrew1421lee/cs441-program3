@@ -303,7 +303,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Start drawing the hud
         batch.begin()
         // Draw the score display
-        hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 500f, Gdx.graphics.height - 50f)
+        hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 550f, Gdx.graphics.height - 50f)
         // Draw speedometers
         //hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
         //hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
