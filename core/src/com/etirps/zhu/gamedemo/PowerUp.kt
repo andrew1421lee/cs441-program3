@@ -51,6 +51,6 @@ class PowerUp(posX: Float, posY: Float, val statusEffect: StatusEffect, val text
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, width, height)
 
-        font?.draw(batch, "pos:$x x $y\nlife:$timeRemaining", x, y)
+        font?.draw(batch, "pos:$x x $y\nlife:$timeRemaining\npower:${statusEffect.type}", x, y)
     }
 }
