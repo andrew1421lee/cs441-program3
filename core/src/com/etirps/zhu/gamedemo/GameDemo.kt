@@ -166,9 +166,9 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 deadRocks.add(rock)
 
                 // Create explosion
-                stage.addActor(Explosion(player.x - player.width / 2, player.y - player.width / 2, player.width, explosionImg, 2000f, debugFont =  debugFont))
-                stage.addActor(Explosion(player.x - player.width * 2f / 2, player.y - player.width * 2f / 2, player.width * 2f, explosionImg, 1000f, debugFont))
-                stage.addActor(Explosion(player.x - player.width * 3f / 2, player.y - player.width * 3f / 2, player.width * 3f, explosionImg, 500f, debugFont))
+                stage.addActor(Explosion(player.x - player.width / 2, player.y - player.width / 2, player.width, explosionImg, 1000f, debugFont =  debugFont))
+                stage.addActor(Explosion(player.x - player.width * 2f / 2, player.y - player.width * 2f / 2, player.width * 2f, explosionImg, 500f, debugFont))
+                stage.addActor(Explosion(player.x - player.width * 3f / 2, player.y - player.width * 3f / 2, player.width * 3f, explosionImg, 250f, debugFont))
 
                 // Remove player
                 player.remove()
@@ -203,8 +203,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     deadBullets.add(bullet)
 
                     // Add explosion
-                    stage.addActor(Explosion(rock.x - rock.size * 0.5f / 2, rock.y - rock.size * 0.5f / 2, rock.size * 0.5f, explosionImg, 1000f, debugFont = debugFont))
-                    stage.addActor(Explosion(rock.x - rock.size / 2, rock.y - rock.size / 2, rock.size, explosionImg, debugFont = debugFont))
+                    stage.addActor(Explosion(rock.x - rock.size * 0.5f / 2, rock.y - rock.size * 0.5f / 2, rock.size * 0.5f, explosionImg, 500f, debugFont = debugFont))
+                    stage.addActor(Explosion(rock.x - rock.size / 2, rock.y - rock.size / 2, rock.size, explosionImg, 250f, debugFont = debugFont))
 
                     // Update the score
                     player.score += 250 - rock.size.toInt()
