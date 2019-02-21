@@ -267,22 +267,18 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Draw status effects
         val textOffset = hud.xHeight
-        var textCounter = 1
+        val lineOffset = hud.xHeight + 140f
+        var textCounter = 0
         for (statusEffect in player.getStatusEffects()) {
             if(!statusEffect.enabled) { continue }
 
             val textWidth = statusEffect.toString().toCharArray().size * 30f
             val timeRemaining = String.format("%.1f", statusEffect.timeRemaining)
             val timeRemainingWidth = timeRemaining.toCharArray().size * 30f
-            hud.draw(batch, statusEffect.toString(), Gdx.graphics.width / 2f - textWidth, Gdx.graphics.height - ((textCounter * textOffset) + 20f))
-            hud.draw(batch, timeRemaining, Gdx.graphics.width / 2f - timeRemainingWidth, Gdx.graphics.height - ((textCounter * textOffset) + 100f))
+            hud.draw(batch, statusEffect.toString(), Gdx.graphics.width / 2f - textWidth, Gdx.graphics.height - ((textCounter * lineOffset) + textOffset + 20f))
+            hud.draw(batch, timeRemaining, Gdx.graphics.width / 2f - timeRemainingWidth, Gdx.graphics.height - ((textCounter * lineOffset) + textOffset + 100f))
             textCounter++
         }
-
-        /*if(player.shielded > 0) {
-            hud.draw(batch, "INVINCIBLE", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
-            hud.draw(batch, "${player.shield}", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
-        }*/
 
         // Check for game over
         if(gameOver) {
@@ -309,8 +305,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 30f, adjacent / 30f), bulletImg, debugFont)
 
         // Push the player in the other direction
-        player.speedX += -opposite / 80f
-        player.speedY += -adjacent / 80f
+        player.speedX += -opposite / player.mass
+        player.speedY += -adjacent / player.mass
 
         // Add bullets to stage
         bullets.add(bullet)
