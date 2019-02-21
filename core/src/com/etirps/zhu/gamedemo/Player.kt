@@ -22,6 +22,7 @@ class Player (posX: Float, posY: Float,
     var score: Int
 
     private var statusEffects: MutableList<StatusEffect>
+    private var removedStatusEffects: MutableList<StatusEffect>
 
     init {
         x = posX
@@ -33,6 +34,7 @@ class Player (posX: Float, posY: Float,
         score = 0
 
         statusEffects = mutableListOf()
+        removedStatusEffects = mutableListOf()
 
         bounds = Rectangle(x, y, width, height)
         polygon = Polygon(floatArrayOf( 0f,             0f,
@@ -69,7 +71,13 @@ class Player (posX: Float, posY: Float,
 
         for(effect in statusEffects) {
             effect.apply(this)
+            if(!effect.enabled) {
+                removedStatusEffects.add(effect)
+            }
         }
+
+        statusEffects.removeAll(removedStatusEffects)
+        removedStatusEffects.clear()
 
         bounds.x = x
         bounds.y = y
