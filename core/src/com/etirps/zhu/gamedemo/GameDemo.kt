@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import kotlin.math.*
 import kotlin.random.Random
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-
+import com.badlogic.gdx.scenes.scene2d.Actor
 
 
 class GameDemo : ApplicationAdapter(), InputProcessor {
@@ -31,15 +31,20 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var input: InputData
     private var debugFont: BitmapFont? = null
     private lateinit var hud: BitmapFont
+    private lateinit var powerUpBuilder: PowerUpBuilder
 
     private lateinit var rockImg: Texture
     private lateinit var explosionImg: Texture
     private lateinit var bulletImg: Texture
     private lateinit var playerImg: Texture
 
+    private lateinit var invinciblePowerUpImg: Texture
+    private lateinit var rockPowerUpImg: Texture
+
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
     private lateinit var bullets: MutableList<Bullet>
+    private lateinit var powerups: MutableList<PowerUp>
 
 
     var coolDown = 100
@@ -74,7 +79,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         fontGenerator.dispose()
 
         // ENABLE OR DISABLE DEBUG MODE
-        //debugFont = BitmapFont()
+        debugFont = BitmapFont()
 
         // Initialize textures
         rockImg = Texture("rock5.png")
@@ -82,9 +87,16 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         bulletImg = Texture("bullet.png")
         playerImg = Texture("player.png")
 
+        rockPowerUpImg = Texture("ref.png")
+        invinciblePowerUpImg = Texture("ref.png")
+
         // Initialize game objects
         rocks = mutableListOf()
         bullets = mutableListOf()
+        powerups = mutableListOf()
+        powerUpBuilder = PowerUpBuilder(debugFont)
+        powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.ROCK, rockPowerUpImg))
+        powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.INVINCIBLE, invinciblePowerUpImg))
 
         // Start the game
         setupStage()
@@ -117,6 +129,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             bullet.remove()
         }
         bullets.clear()
+
+        for(powerup in powerups) {
+            powerup.remove()
+        }
+        powerups.clear()
 
         player.remove()
     }
@@ -151,7 +168,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Create lists for removed rocks, bullets, and created rocks
         val deadBullets = mutableListOf<Bullet>()
         val deadRocks = mutableListOf<Rock>()
-        val newRocks = mutableListOf<Rock>()
+        val newActors = mutableListOf<Actor>()
 
         // Check if the player hit anything
         for(rock in rocks) {
@@ -163,7 +180,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 gameOver = true
 
                 // Split the rock, add it to new rocks list
-                newRocks.addAll(rock.split())
+                newActors.addAll(rock.split())
                 // Remove the rock from the stage and add it to dead rocks list
                 rock.remove()
                 deadRocks.add(rock)
@@ -193,7 +210,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 // If the bullet and rock collided
                 if(Intersector.overlapConvexPolygons(bullet.polygon, rock.polygon)) {
                     // Split the rock and add the result
-                    newRocks.addAll(rock.split())
+                    newActors.addAll(rock.split())
 
                     // Remove the bullet and rock
                     bullet.remove()
@@ -208,6 +225,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
                     // Update the score
                     player.score += 250 - rock.size.toInt()
+
+                    //Drop power up?
+                    val powerUp = powerUpBuilder.createPowerUp(rock.x + (rock.size / 4f), rock.y + (rock.size / 4f))
+                    if(powerUp != null) {
+                        newActors.add(powerUp)
+                    }
                 }
             }
         }
@@ -217,11 +240,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         rocks.removeAll(deadRocks)
 
         // Add all new rocks
-        for(newRock in newRocks) {
+        for(newRock in newActors) {
             stage.addActor(newRock)
         }
-        rocks.addAll(newRocks)
 
+        rocks.addAll(newActors.filter { x -> x is Rock }.map { x -> x as Rock })
+        powerups.addAll(newActors.filter { x -> x is PowerUp }.map { x -> x as PowerUp })
     }
 
     private fun drawAimingReticule() {
