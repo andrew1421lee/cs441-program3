@@ -291,7 +291,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             shapes.rectLine(Vector2(player.x + player.height / 2 - (input.origX - input.aimingX),
                     player.y + player.height /2 - (input.origY - input.aimingY)),
                     Vector2(player.x + player.height / 2 - (input.origX - input.destX),
-                            player.y + player.height /2 - (input.origY - input.destY)), 3f)
+                            player.y + player.height /2 - (input.origY - input.destY)), 1f)
 
         }
 
