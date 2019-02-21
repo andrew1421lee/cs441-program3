@@ -101,6 +101,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
         player.addStatusEffect(InvincibleEffect(3f))
+        player.addStatusEffect(RockEffect(3f))
         stage.addActor(player)
         spawnRock(5)
     }
@@ -266,17 +267,22 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
 
         // Draw status effects
+        // Used to offset from the top
         val textOffset = hud.xHeight
+        // Used to offset from other status effects
         val lineOffset = hud.xHeight + 140f
+        // Used to stack line offsets
         var textCounter = 0
         for (statusEffect in player.getStatusEffects()) {
+            // Skip if not enabled, just in case
             if(!statusEffect.enabled) { continue }
 
-            val textWidth = statusEffect.toString().toCharArray().size * 30f
+            // Format time remaining to 1 decimal point
             val timeRemaining = String.format("%.1f", statusEffect.timeRemaining)
-            val timeRemainingWidth = timeRemaining.toCharArray().size * 30f
-            hud.draw(batch, statusEffect.toString(), Gdx.graphics.width / 2f - textWidth, Gdx.graphics.height - ((textCounter * lineOffset) + textOffset + 20f))
-            hud.draw(batch, timeRemaining, Gdx.graphics.width / 2f - timeRemainingWidth, Gdx.graphics.height - ((textCounter * lineOffset) + textOffset + 100f))
+            // Draw the status effect
+            hud.draw(batch, statusEffect.toString(), 20f, Gdx.graphics.height - ((textCounter * lineOffset) + textOffset + 20f))
+            hud.draw(batch, timeRemaining, 60f, Gdx.graphics.height - ((textCounter * lineOffset) + textOffset + 90f))
+
             textCounter++
         }
 
@@ -289,7 +295,6 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             } else {
                 hud.draw(batch, "TOUCH TO PLAY AGAIN", Gdx.graphics.width / 2f - 250f, Gdx.graphics.height / 2f - 100f)
             }
-
         }
 
         // Finish drawing
