@@ -21,8 +21,8 @@ class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var tex
     init {
         x = posX
         y = posY
-        width = 20f
-        height = 20f
+        width = 30f
+        height = 30f
         rotation = angle
         distanceTraveled = 0f
         font = debugFont
@@ -40,7 +40,7 @@ class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var tex
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
-        batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
+        batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 100, 100, false, false)
 
         font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:${speed.x} x ${speed.y}\nlife:${2000 - distanceTraveled}", x, y)
     }
