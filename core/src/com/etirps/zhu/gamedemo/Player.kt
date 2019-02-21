@@ -16,11 +16,12 @@ class Player (posX: Float, posY: Float,
               debugFont: BitmapFont? = null): Actor() {
 
     private val font: BitmapFont?
-    var shield: Int
+    var shielded: Boolean
     var bounds: Rectangle
     var polygon: Polygon
     var score: Int
 
+    private var statusEffects: MutableList<StatusEffect>
 
     init {
         x = posX
@@ -28,8 +29,10 @@ class Player (posX: Float, posY: Float,
         width = 100f
         height = 100f
         font = debugFont
-        shield = 3000
+        shielded = false
         score = 0
+
+        statusEffects = mutableListOf()
 
         bounds = Rectangle(x, y, width, height)
         polygon = Polygon(floatArrayOf( 0f,             0f,
@@ -40,10 +43,23 @@ class Player (posX: Float, posY: Float,
         polygon.setPosition(x, y)
     }
 
+    fun addStatusEffect(statusEffect: StatusEffect) {
+        statusEffect.apply(this)
+        statusEffects.add(statusEffect)
+    }
+
+    fun removeStatusEffect(statusEffect: StatusEffect) {
+        statusEffects.remove(statusEffect)
+    }
+
+    fun getStatusEffects(): List<StatusEffect> {
+        return statusEffects.toList()
+    }
+
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 500, 500, false, false)
 
-        font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:$speedX x $speedY\nshield:$shield", x, y)
+        font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:$speedX x $speedY\nshield:$shielded", x, y)
     }
 
     override fun act(delta: Float) {
@@ -51,13 +67,9 @@ class Player (posX: Float, posY: Float,
         y += speedY
         //rotation += speedSpin
 
-        if(shield > 0) {
-            shield -= 20
+        for(effect in statusEffects) {
+            effect.apply(this)
         }
-        else {
-            // No shield
-        }
-
 
         bounds.x = x
         bounds.y = y
