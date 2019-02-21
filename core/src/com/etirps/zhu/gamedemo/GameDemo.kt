@@ -319,10 +319,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // If flag is set
         if(input.touchedUp) {
             // if game is not over
-            if(!gameOver) {
+            if(!gameOver && input.dragging) {
                 // Fire bullet
                 fire()
                 input.touchedUp = false
+                input.dragging = false
             // Check if game over cool down is over
             } else if(coolDown <= 0) {
                 // Reset input flags
@@ -380,7 +381,6 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         input.touchedUp = true
 
         input.touchedDown = false
-        input.dragging = false
 
         return true
     }
