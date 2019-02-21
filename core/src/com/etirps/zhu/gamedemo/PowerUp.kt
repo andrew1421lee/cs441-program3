@@ -21,8 +21,8 @@ class PowerUp(posX: Float, posY: Float, val statusEffect: StatusEffect, val text
     init {
         x = posX
         y = posY
-        width = 50f
-        height = 50f
+        width = 100f
+        height = 80f
 
         bounds = Rectangle(x, y, width, height)
         polygon = Polygon(floatArrayOf( 0f,             0f,
