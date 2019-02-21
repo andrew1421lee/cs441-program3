@@ -116,8 +116,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
         player.addStatusEffect(InvincibleEffect(5f))
-        player.addStatusEffect(LightEffect(5f))
-        player.addStatusEffect(HeavyEffect(5f))
+        //player.addStatusEffect(LightEffect(5f))
+        //player.addStatusEffect(HeavyEffect(5f))
 
         stage.addActor(player)
         spawnRock(5)
@@ -249,7 +249,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     player.score += 250 - rock.size.toInt()
 
                     //Drop power up?
-                    val spawn: Boolean = (0..3).random() == 3
+                    val spawn: Boolean = (0..5).random() == 5
                     if(spawn) {
                         val powerUp = powerUpBuilder.createPowerUp(rock.x + (rock.size / 4f), rock.y + (rock.size / 4f))
                         if (powerUp != null) {
@@ -299,18 +299,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     }
 
     private fun drawHUD() {
-        // Get values to display on HUD
-        //val speed = String.format("%.1f", sqrt((player.x + player.speedX - player.x).pow(2) + (player.y + player.speedY - player.y).pow(2)))
-        //val speedX = String.format("%.1f", player.speedX)
-        //val speedY= String.format("%.1f", player.speedY)
 
         // Start drawing the hud
         batch.begin()
         // Draw the score display
         hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 550f, Gdx.graphics.height - 50f)
-        // Draw speedometers
-        //hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
-        //hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
 
         // Draw status effects
         // Used to offset from the top
