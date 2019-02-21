@@ -8,6 +8,14 @@ enum class StatusTypes { DEFAULT, INVINCIBLE, ROCK }
 abstract class StatusEffect {
 
     companion object {
+        fun createStatusEffect(type: StatusTypes): StatusEffect? {
+            return when(type) {
+                StatusTypes.INVINCIBLE -> InvincibleEffect()
+                StatusTypes.ROCK -> RockEffect()
+                StatusTypes.DEFAULT -> null
+            }
+        }
+
         fun createStatusEffect(): StatusEffect? {
             val randomIndex = (0..StatusTypes.values().size).random()
             val newType: StatusTypes = StatusTypes.values()[randomIndex]
