@@ -42,7 +42,7 @@ class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var tex
     override fun draw(batch: Batch, parentAlpha: Float) {
         batch.draw(texture, x, y, width / 2, height / 2, width, height, 1f, 1f, rotation, 0, 0, 100, 100, false, false)
 
-        font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:${speed.x} x ${speed.y}\nlife:${2000 - distanceTraveled}", x, y)
+        font?.draw(batch, "angle:$rotation\npos:$x x $y\nspeed:${speed.x} x ${speed.y}\nlife:${1500 - distanceTraveled}", x, y)
     }
 
     override fun act(delta: Float) {
@@ -51,7 +51,7 @@ class Bullet(posX: Float, posY: Float, angle: Float, var speed: Vector2, var tex
 
         distanceTraveled += 20
 
-        if(distanceTraveled > 2000) {
+        if(distanceTraveled > 1500) {
             this.remove()
             active = false
             return
