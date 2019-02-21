@@ -118,8 +118,6 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
         player.addStatusEffect(InvincibleEffect(5f))
-        //player.addStatusEffect(LightEffect(5f))
-        //player.addStatusEffect(HeavyEffect(5f))
 
         stage.addActor(player)
         spawnRock(rocks)

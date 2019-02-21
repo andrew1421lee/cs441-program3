@@ -48,8 +48,16 @@ class Player (posX: Float, posY: Float,
     }
 
     fun addStatusEffect(statusEffect: StatusEffect) {
-        statusEffect.apply(this)
-        statusEffects.add(statusEffect)
+        // If status does not exist, add status
+        if(statusEffects.none { x -> x.type == statusEffect.type }) {
+            statusEffect.apply(this)
+            statusEffects.add(statusEffect)
+        } else {
+            // status already exists, increment timer
+            val effect = statusEffects.filter { x -> x.type == statusEffect.type }[0]
+            effect.duration += statusEffect.duration
+        }
+
     }
 
     /*

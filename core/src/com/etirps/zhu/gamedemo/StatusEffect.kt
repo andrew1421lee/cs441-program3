@@ -14,7 +14,7 @@ abstract class StatusEffect {
     private fun updateDuration() {
         val timeElapsed = TimeUtils.millis() - lastTime
 
-        timeRemaining =  duration - timeElapsed / 1000f
+        timeRemaining = duration - timeElapsed / 1000f
 
         if(timeElapsed / 1000 >= duration) {
             enabled = false
