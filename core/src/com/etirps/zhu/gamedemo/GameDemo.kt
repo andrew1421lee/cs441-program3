@@ -72,15 +72,15 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Setup fps counter + hud
         fpsCounter = FrameRate(debugFont)
         fpsCounter.resize(screenWidth, screenHeight)
-        val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("Roboto.TTF"))
+        val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("LCALLIG.TTF"))
         val fontParameters = FreeTypeFontGenerator.FreeTypeFontParameter()
         fontParameters.size = 60
         hud = fontGenerator.generateFont(fontParameters)
-        hud.setFixedWidthGlyphs("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+        //hud.setFixedWidthGlyphs("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
         fontGenerator.dispose()
 
         // ENABLE OR DISABLE DEBUG MODE
-        debugFont = BitmapFont()
+        //debugFont = BitmapFont()
 
         // Initialize textures
         rockImg = Texture("rock5.png")
@@ -304,6 +304,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         batch.begin()
         // Draw the score display
         hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 550f, Gdx.graphics.height - 50f)
+
+        // Draw power indicator
+        if(input.dragging && !gameOver) {
+            hud.draw(batch, "f = ${input.aimingDistance.roundToInt()}", player.x - 50f, player.y - 40f)
+        }
 
         // Draw status effects
         // Used to offset from the top
