@@ -19,6 +19,7 @@ import kotlin.math.*
 import kotlin.random.Random
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.utils.TimeUtils
 
 
 class GameDemo : ApplicationAdapter(), InputProcessor {
@@ -39,7 +40,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var playerImg: Texture
 
     private lateinit var invinciblePowerUpImg: Texture
-    private lateinit var rockPowerUpImg: Texture
+    private lateinit var heavyPowerUpImg: Texture
 
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
@@ -87,7 +88,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         bulletImg = Texture("bullet.png")
         playerImg = Texture("player.png")
 
-        rockPowerUpImg = Texture("ref.png")
+        heavyPowerUpImg = Texture("ref.png")
         invinciblePowerUpImg = Texture("ref.png")
 
         // Initialize game objects
@@ -95,7 +96,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         bullets = mutableListOf()
         powerups = mutableListOf()
         powerUpBuilder = PowerUpBuilder(debugFont)
-        powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.ROCK, rockPowerUpImg))
+        powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.HEAVY, heavyPowerUpImg))
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.INVINCIBLE, invinciblePowerUpImg))
 
         // Start the game
@@ -112,8 +113,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         input.destY = 0f
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
-        player.addStatusEffect(InvincibleEffect(3f))
-        player.addStatusEffect(RockEffect(3f))
+        player.addStatusEffect(InvincibleEffect(5f))
+
         stage.addActor(player)
         spawnRock(5)
     }
@@ -167,10 +168,24 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Create lists for removed rocks, bullets, and created rocks
         val deadBullets = mutableListOf<Bullet>()
-        val deadRocks = mutableListOf<Rock>()
+        val deadActors = mutableListOf<Actor>()
         val newActors = mutableListOf<Actor>()
 
-        // Check if the player hit anything
+        // Check if player hit any power ups
+        for(power in powerups) {
+            if(Intersector.overlapConvexPolygons(player.polygon, power.polygon)) {
+                // Reset start time for power up
+                power.statusEffect.lastTime = TimeUtils.millis()
+                // Apply status effect
+                player.addStatusEffect(power.statusEffect)
+                // remove from stage
+                power.remove()
+                // add to dead actors
+                deadActors.add(power)
+            }
+        }
+
+        // Check if the player hit any rocks
         for(rock in rocks) {
             if(player.shielded || gameOver) { break }
 
@@ -183,7 +198,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 newActors.addAll(rock.split())
                 // Remove the rock from the stage and add it to dead rocks list
                 rock.remove()
-                deadRocks.add(rock)
+                deadActors.add(rock)
 
                 // Create explosion
                 stage.addActor(Explosion(player.x - player.width / 2, player.y - player.width / 2, player.width * 2f, explosionImg, 50f, debugFont =  debugFont))
@@ -194,8 +209,9 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         }
 
         // Remove all rocks so removed rocks aren't used for next step
-        rocks.removeAll(deadRocks)
-        deadRocks.clear()
+        rocks.removeAll(deadActors.filter { x -> x is Rock })
+        powerups.removeAll(deadActors.filter { x -> x is PowerUp })
+        deadActors.clear()
 
         // For every bullet on screen
         for(bullet in bullets) {
@@ -217,7 +233,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     rock.remove()
 
                     // Add them to be removed later
-                    deadRocks.add(rock)
+                    deadActors.add(rock)
                     deadBullets.add(bullet)
 
                     // Add explosion
@@ -227,9 +243,12 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     player.score += 250 - rock.size.toInt()
 
                     //Drop power up?
-                    val powerUp = powerUpBuilder.createPowerUp(rock.x + (rock.size / 4f), rock.y + (rock.size / 4f))
-                    if(powerUp != null) {
-                        newActors.add(powerUp)
+                    val spawn: Boolean = (0..3).random() == 3
+                    if(spawn) {
+                        val powerUp = powerUpBuilder.createPowerUp(rock.x + (rock.size / 4f), rock.y + (rock.size / 4f))
+                        if (powerUp != null) {
+                            newActors.add(powerUp)
+                        }
                     }
                 }
             }
@@ -237,7 +256,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Remove all resulting dead rocks and bullets
         bullets.removeAll(deadBullets)
-        rocks.removeAll(deadRocks)
+        rocks.removeAll(deadActors)
 
         // Add all new rocks
         for(newRock in newActors) {
