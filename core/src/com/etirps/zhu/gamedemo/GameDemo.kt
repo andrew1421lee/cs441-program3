@@ -70,6 +70,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         val fontParameters = FreeTypeFontGenerator.FreeTypeFontParameter()
         fontParameters.size = 60
         hud = fontGenerator.generateFont(fontParameters)
+        hud.setFixedWidthGlyphs("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
         fontGenerator.dispose()
 
         // ENABLE OR DISABLE DEBUG MODE
@@ -99,6 +100,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         input.destY = 0f
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
+        player.addStatusEffect(InvincibleEffect(3f))
         stage.addActor(player)
         spawnRock(5)
     }
@@ -152,7 +154,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Check if the player hit anything
         for(rock in rocks) {
-            if(player.shield > 0 || gameOver) { break }
+            if(player.shielded || gameOver) { break }
 
             // Player collided with rock
             if(Intersector.overlapConvexPolygons(player.polygon, rock.polygon)) {
@@ -263,11 +265,24 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         hud.draw(batch, "SPEED X: $speedX", Gdx.graphics.width / 2 - 400f, 75f)
         hud.draw(batch, "SPEED Y: $speedY", Gdx.graphics.width / 2 + 100f, 75f)
 
-        // Check for status effects
-        if(player.shield > 0) {
+        // Draw status effects
+        val textOffset = hud.xHeight
+        var textCounter = 1
+        for (statusEffect in player.getStatusEffects()) {
+            if(!statusEffect.enabled) { continue }
+
+            val textWidth = statusEffect.toString().toCharArray().size * 30f
+            val timeRemaining = String.format("%.1f", statusEffect.timeRemaining)
+            val timeRemainingWidth = timeRemaining.toCharArray().size * 30f
+            hud.draw(batch, statusEffect.toString(), Gdx.graphics.width / 2f - textWidth, Gdx.graphics.height - ((textCounter * textOffset) + 20f))
+            hud.draw(batch, timeRemaining, Gdx.graphics.width / 2f - timeRemainingWidth, Gdx.graphics.height - ((textCounter * textOffset) + 100f))
+            textCounter++
+        }
+
+        /*if(player.shielded > 0) {
             hud.draw(batch, "INVINCIBLE", Gdx.graphics.width / 2f - 100f, Gdx.graphics.height / 2f)
             hud.draw(batch, "${player.shield}", Gdx.graphics.width / 2f - 5f, Gdx.graphics.height / 2f - 100f)
-        }
+        }*/
 
         // Check for game over
         if(gameOver) {
