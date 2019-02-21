@@ -49,7 +49,9 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var powerups: MutableList<PowerUp>
 
     var coolDown = 100
+    var numberOfRocks = 1
     var gameOver = false
+    var stageComplete = false
 
     override fun create() {
         // Get screen size for easier use
@@ -102,10 +104,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.LIGHT, lightPowerUpImg))
 
         // Start the game
-        setupStage()
+        setupStage(numberOfRocks)
     }
 
-    private fun setupStage() {
+    private fun setupStage(rocks: Int) {
         coolDown = 100
 
         // Reset input values
@@ -120,7 +122,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         //player.addStatusEffect(HeavyEffect(5f))
 
         stage.addActor(player)
-        spawnRock(5)
+        spawnRock(rocks)
     }
 
     private fun clearStage() {
@@ -271,6 +273,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         rocks.addAll(newActors.filter { x -> x is Rock }.map { x -> x as Rock })
         powerups.addAll(newActors.filter { x -> x is PowerUp }.map { x -> x as PowerUp })
+
+        if(rocks.size == 0) {
+            stageComplete = true
+        }
     }
 
     private fun drawAimingReticule() {
@@ -341,6 +347,16 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             }
         }
 
+        if(stageComplete) {
+            hud.draw(batch, "STAGE COMPLETE", (Gdx.graphics.width / 2f) - 300f, (Gdx.graphics.height / 2f) + 60f)
+            if(coolDown > 0) {
+                hud.draw(batch, "$coolDown", (Gdx.graphics.width / 2f) - 300f, (Gdx.graphics.height / 2f))
+                coolDown -= 1
+            } else {
+                hud.draw(batch, "READY?", (Gdx.graphics.width / 2f) - 200f, (Gdx.graphics.height / 2f))
+            }
+        }
+
         // Finish drawing
         batch.end()
     }
@@ -376,9 +392,17 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 // Reset input flags
                 input.touchedUp = false
                 // Reset the game
-                gameOver = false
+                if(stageComplete) {
+                    numberOfRocks += 2
+                    stageComplete = false
+                }
+                else {
+                    numberOfRocks = 1
+                    gameOver = false
+                }
+
                 clearStage()
-                setupStage()
+                setupStage(numberOfRocks)
                 return
             } else {
                 input.touchedUp = false
