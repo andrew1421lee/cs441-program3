@@ -309,12 +309,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             if(!gameOver) {
                 // Fire bullet
                 fire()
+                input.touchedUp = false
             // Check if game over cool down is over
             } else if(coolDown <= 0) {
                 // Reset input flags
                 input.touchedUp = false
-                input.touchedDown = false
-                input.dragging = false
                 // Reset the game
                 gameOver = false
                 clearStage()
@@ -322,11 +321,6 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 return
             }
         }
-
-        // Reset all input flags
-        input.touchedUp = false
-        input.touchedDown = false
-        input.dragging = false
     }
 
     override fun render() {
@@ -371,6 +365,9 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         // Set flag
         input.touchedUp = true
+
+        input.touchedDown = false
+        input.dragging = false
 
         return true
     }
