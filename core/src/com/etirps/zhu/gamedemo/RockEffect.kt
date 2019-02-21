@@ -2,7 +2,7 @@ package com.etirps.zhu.gamedemo
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 
-class RockEffect(time: Float): StatusEffect() {
+class RockEffect(time: Float = 5f): StatusEffect() {
 
     init {
         duration = time
