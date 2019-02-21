@@ -19,7 +19,6 @@ class InvincibleEffect(time: Float) : StatusEffect() {
     override fun remove(actor: Actor) {
         if(actor is Player) {
             actor.shielded = false
-            actor.removeStatusEffect(this)
         }
     }
 }

@@ -73,6 +73,7 @@ class Player (posX: Float, posY: Float,
             effect.apply(this)
             if(!effect.enabled) {
                 removedStatusEffects.add(effect)
+                effect.remove(this)
             }
         }
 
