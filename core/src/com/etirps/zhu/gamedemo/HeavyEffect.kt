@@ -2,11 +2,11 @@ package com.etirps.zhu.gamedemo
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 
-class RockEffect(time: Float = 5f): StatusEffect() {
+class HeavyEffect(time: Float = 5f): StatusEffect() {
 
     init {
         duration = time
-        type = StatusTypes.ROCK
+        type = StatusTypes.HEAVY
     }
 
     override fun applyEffect(actor: Actor) {
