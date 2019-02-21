@@ -173,6 +173,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Check if player hit any power ups
         for(power in powerups) {
+            if(!power.active) { deadActors.add(power); continue }
+
             if(Intersector.overlapConvexPolygons(player.polygon, power.polygon)) {
                 // Reset start time for power up
                 power.statusEffect.lastTime = TimeUtils.millis()
@@ -382,7 +384,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
     override fun render() {
         // Clear screen with black color
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+        Gdx.gl.glClearColor(56f / 255f, 56f / 255f, 56f / 255f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         // Update camera matrices
