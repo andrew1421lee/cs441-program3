@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Player (posX: Float, posY: Float,
               var texture: Texture,
@@ -65,6 +68,21 @@ class Player (posX: Float, posY: Float,
 
     fun getStatusEffects(): List<StatusEffect> {
         return statusEffects.toList()
+    }
+
+    fun fire(angle: Float, force: Float, bulletTexture: Texture): Bullet {
+        val adjacent = cos(angle) * force
+        val opposite = sin(angle) * force
+
+        // Create new bullet
+        val bullet = Bullet(x + (width / 2), y + (height / 2), rotation, Vector2(opposite / 30f, adjacent / 30f), bulletTexture, font)
+
+        // Push the player in the other direction
+        speedX += -opposite / mass
+        speedY += -adjacent / mass
+
+        // Add bullets to stage
+        return bullet
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {

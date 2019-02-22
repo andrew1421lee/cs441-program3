@@ -360,30 +360,16 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         batch.end()
     }
 
-    private fun fire() {
-        // Discover power level based on input distance
-        val adjacent = cos(input.aimingAngle) * input.aimingDistance
-        val opposite = sin(input.aimingAngle) * input.aimingDistance
-
-        // Create new bullet
-        val bullet = Bullet(player.x + (player.width / 2), player.y + (player.height / 2), player.rotation, Vector2(opposite / 30f, adjacent / 30f), bulletImg, debugFont)
-
-        // Push the player in the other direction
-        player.speedX += -opposite / player.mass
-        player.speedY += -adjacent / player.mass
-
-        // Add bullets to stage
-        bullets.add(bullet)
-        stage.addActor(bullet)
-    }
-
     private fun checkOnTouch() {
         // If flag is set
         if(input.touchedUp) {
             // if game is not over
             if(!gameOver && input.dragging) {
                 // Fire bullet
-                fire()
+                val bullet = player.fire(input.aimingAngle, input.aimingDistance, bulletImg)
+                bullets.add(bullet)
+                stage.addActor(bullet)
+
                 input.touchedUp = false
                 input.dragging = false
             // Check if game over cool down is over
