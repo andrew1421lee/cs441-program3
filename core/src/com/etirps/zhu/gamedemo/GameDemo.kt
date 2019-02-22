@@ -94,7 +94,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         heavyPowerUpImg = Texture("heavy_power.png")
         invinciblePowerUpImg = Texture("invincible_power.png")
         lightPowerUpImg = Texture("light_power.png")
-        explosionPowerUpImg = Texture("ref.png")
+        explosionPowerUpImg = Texture("explosion_power.png")
 
         // Initialize game objects
         rocks = mutableListOf()
