@@ -45,7 +45,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
-    private lateinit var bullets: MutableList<Bullet>
+    //private lateinit var bullets: MutableList<Bullet>
     private lateinit var powerups: MutableList<PowerUp>
 
     var coolDown = 100
@@ -97,7 +97,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
         // Initialize game objects
         rocks = mutableListOf()
-        bullets = mutableListOf()
+        //bullets = mutableListOf()
         powerups = mutableListOf()
         powerUpBuilder = PowerUpBuilder(debugFont)
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.HEAVY, heavyPowerUpImg))
@@ -131,10 +131,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         }
         rocks.clear()
 
-        for (bullet in bullets) {
+        for (bullet in player.bulletsFired) {
             bullet.remove()
         }
-        bullets.clear()
+        player.bulletsFired.clear()
 
         for(powerup in powerups) {
             powerup.remove()
@@ -221,7 +221,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         deadActors.clear()
 
         // For every bullet on screen
-        for(bullet in bullets) {
+        for(bullet in player.bulletsFired) {
             // If, for some reason, bullet is not active, remove it and go next
             if(!bullet.active) {
                 deadBullets.add(bullet)
@@ -262,7 +262,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         }
 
         // Remove all resulting dead rocks and bullets
-        bullets.removeAll(deadBullets)
+        player.bulletsFired.removeAll(deadBullets)
         rocks.removeAll(deadActors)
 
         // Add all new rocks
@@ -367,7 +367,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             if(!gameOver && input.dragging) {
                 // Fire bullet
                 val bullet = player.fire(input.aimingAngle, input.aimingDistance, bulletImg)
-                bullets.add(bullet)
+                //bullets.add(bullet)
                 stage.addActor(bullet)
 
                 input.touchedUp = false

@@ -27,6 +27,8 @@ class Player (posX: Float, posY: Float,
     private var statusEffects: MutableList<StatusEffect>
     private var removedStatusEffects: MutableList<StatusEffect>
 
+    var bulletsFired: MutableList<Bullet>
+
     init {
         x = posX
         y = posY
@@ -46,6 +48,8 @@ class Player (posX: Float, posY: Float,
                                         0f,             bounds.height))
         polygon.setOrigin(bounds.width / 2, bounds.height / 2)
         polygon.setPosition(x, y)
+
+        bulletsFired = mutableListOf()
     }
 
     fun addStatusEffect(statusEffect: StatusEffect) {
@@ -82,6 +86,7 @@ class Player (posX: Float, posY: Float,
         speedY += -adjacent / mass
 
         // Add bullets to stage
+        bulletsFired.add(bullet)
         return bullet
     }
 
