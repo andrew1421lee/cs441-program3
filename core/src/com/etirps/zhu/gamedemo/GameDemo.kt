@@ -42,10 +42,10 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
     private lateinit var invinciblePowerUpImg: Texture
     private lateinit var heavyPowerUpImg: Texture
     private lateinit var lightPowerUpImg: Texture
+    private lateinit var explosionPowerUpImg: Texture
 
     private lateinit var player: Player
     private lateinit var rocks: MutableList<Rock>
-    //private lateinit var bullets: MutableList<Bullet>
     private lateinit var powerups: MutableList<PowerUp>
 
     var coolDown = 100
@@ -94,15 +94,16 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         heavyPowerUpImg = Texture("heavy_power.png")
         invinciblePowerUpImg = Texture("invincible_power.png")
         lightPowerUpImg = Texture("light_power.png")
+        explosionPowerUpImg = Texture("ref.png")
 
         // Initialize game objects
         rocks = mutableListOf()
-        //bullets = mutableListOf()
         powerups = mutableListOf()
         powerUpBuilder = PowerUpBuilder(debugFont)
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.HEAVY, heavyPowerUpImg))
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.INVINCIBLE, invinciblePowerUpImg))
         powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.LIGHT, lightPowerUpImg))
+        powerUpBuilder.loadPowerUp(PowerUpData(StatusTypes.EXPLOSION, explosionPowerUpImg))
 
         // Start the game
         setupStage(numberOfRocks)
@@ -117,7 +118,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         input.destX = 0f
         input.destY = 0f
 
-        player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, debugFont = debugFont)
+        player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, bulletTexture = bulletImg, debugFont = debugFont)
         player.addStatusEffect(InvincibleEffect(5f))
 
         stage.addActor(player)
@@ -250,7 +251,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     score += 250 - rock.size.toInt()
 
                     //Drop power up?
-                    val spawn: Boolean = (0..5).random() == 5
+                    val spawn: Boolean = (0..3).random() == 3
                     if(spawn) {
                         val powerUp = powerUpBuilder.createPowerUp(rock.x + (rock.size / 4f), rock.y + (rock.size / 4f))
                         if (powerUp != null) {
@@ -366,9 +367,8 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
             // if game is not over
             if(!gameOver && input.dragging) {
                 // Fire bullet
-                val bullet = player.fire(input.aimingAngle, input.aimingDistance, bulletImg)
-                //bullets.add(bullet)
-                stage.addActor(bullet)
+                player.fire(input.aimingAngle, input.aimingDistance)
+                //stage.addActor(bullet)
 
                 input.touchedUp = false
                 input.dragging = false
