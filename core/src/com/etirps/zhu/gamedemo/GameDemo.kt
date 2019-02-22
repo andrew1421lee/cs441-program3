@@ -119,9 +119,11 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         input.destY = 0f
 
         player = Player(Gdx.graphics.width.toFloat() / 2, Gdx.graphics.height.toFloat() / 2, playerImg, bulletTexture = bulletImg, debugFont = debugFont)
+        stage.addActor(player)
+
         player.addStatusEffect(InvincibleEffect(5f))
 
-        stage.addActor(player)
+
         spawnRock(rocks)
     }
 
