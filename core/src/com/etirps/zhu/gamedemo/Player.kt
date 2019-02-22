@@ -16,6 +16,7 @@ class Player (posX: Float, posY: Float,
               var texture: Texture,
               var speedX: Float = 0f,
               var speedY: Float = 0f,
+              var bulletTexture: Texture,
               debugFont: BitmapFont? = null): Actor() {
 
     private val font: BitmapFont?
@@ -74,7 +75,7 @@ class Player (posX: Float, posY: Float,
         return statusEffects.toList()
     }
 
-    fun fire(angle: Float, force: Float, bulletTexture: Texture): Bullet {
+    fun fire(angle: Float, force: Float): Bullet {
         val adjacent = cos(angle) * force
         val opposite = sin(angle) * force
 
@@ -87,6 +88,7 @@ class Player (posX: Float, posY: Float,
 
         // Add bullets to stage
         bulletsFired.add(bullet)
+        stage.addActor(bullet)
         return bullet
     }
 
