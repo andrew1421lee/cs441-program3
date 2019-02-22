@@ -50,6 +50,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
 
     var coolDown = 100
     var numberOfRocks = 1
+    var score = 0
     var gameOver = false
     var stageComplete = false
 
@@ -246,7 +247,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                     stage.addActor(Explosion(rock.x, rock.y, rock.size, explosionImg, 25f, debugFont = debugFont))
 
                     // Update the score
-                    player.score += 250 - rock.size.toInt()
+                    score += 250 - rock.size.toInt()
 
                     //Drop power up?
                     val spawn: Boolean = (0..5).random() == 5
@@ -307,7 +308,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
         // Start drawing the hud
         batch.begin()
         // Draw the score display
-        hud.draw(batch, "SCORE: ${player.score}", Gdx.graphics.width - 550f, Gdx.graphics.height - 50f)
+        hud.draw(batch, "SCORE: ${score}", Gdx.graphics.width - 550f, Gdx.graphics.height - 50f)
 
         // Draw power indicator
         if(input.dragging && !gameOver) {
@@ -396,6 +397,7 @@ class GameDemo : ApplicationAdapter(), InputProcessor {
                 }
                 else {
                     numberOfRocks = 1
+                    score = 0
                     gameOver = false
                 }
 

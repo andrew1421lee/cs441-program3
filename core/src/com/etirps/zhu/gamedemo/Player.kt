@@ -19,7 +19,6 @@ class Player (posX: Float, posY: Float,
     var shielded: Boolean
     var bounds: Rectangle
     var polygon: Polygon
-    var score: Int
     var mass: Float
 
     private var statusEffects: MutableList<StatusEffect>
@@ -32,7 +31,6 @@ class Player (posX: Float, posY: Float,
         height = 100f
         font = debugFont
         shielded = false
-        score = 0
         mass = 80f
 
         statusEffects = mutableListOf()
