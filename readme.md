@@ -4,6 +4,8 @@ Imagine the classic game of Asteroids...but you can only move by shooting and yo
 
 Isaac Newton has had enough of these infuriating apples hitting his head! Throw math at the apples to destroy them! Watch out! Every action has an equal and opposite reaction!
 
+https://youtu.be/GzetIp0tI78
+
 ## Other neat features
 * Aim your shots with an intuitive drag system! You can control the throw power based on how far you drag!
 * Increase or decrease your MASS with power-ups! Be careful, these power-ups might not be so helpful, don't lose control!
